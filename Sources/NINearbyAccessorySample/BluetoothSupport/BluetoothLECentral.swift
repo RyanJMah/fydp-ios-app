@@ -87,10 +87,12 @@ class MQTT {
     var delegate: CocoaMQTTDelegate?
     
     func setUpMQTT() {
-        let clientID = "phone_CocoaMQTT-" + String(ProcessInfo().processIdentifier)
-        mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.8.2", port: 1883)
+//        let clientID = "phone_CocoaMQTT-" + String(ProcessInfo().processIdentifier)
+        print("DOES THIS EVEN RUN????")
+        let clientID = "GuidingLite_iOS_" + String(ProcessInfo().processIdentifier)
+        mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.2.2", port: 1883)
+        mqtt.logLevel = .info
         mqtt.keepAlive = 60
-        print("SLKDFJLSKDFJKLSDJF")
         let success = mqtt.connect(timeout: 60)
         print("CONNECTION STATUS: \(success)")
 //        mqtt.ping()

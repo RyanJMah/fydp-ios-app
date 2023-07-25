@@ -160,14 +160,13 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     let btnDisconnect = "Disconnect"
     let devNotConnected = "NO ACCESSORY CONNECTED"
     let scene = SCNScene(named: "3d_arrow.usdz")
+
+    var first_time_mqtt_init = true
+    var mqtt_client: MQTT = MQTT()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let someMQTT = MQTT()
-        someMQTT.delegate = self
-        someMQTT.setUpMQTT()
         
         mqttLabel.textColor = UIColor.black
         
@@ -401,6 +400,20 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     }
     
     @objc func timerHandler() {
+        // ---------------------------------------------------------
+        // MQTT SHIT
+        if ( self.first_time_mqtt_init )
+        {
+            print("SDLKFJSLDFJLSDKFJSDLFKJS");
+            self.mqtt_client.delegate = self
+            self.mqtt_client.setUpMQTT()
+            print("DOES IT EVEN GET HERE???")
+            
+            self.first_time_mqtt_init = false
+        }
+        // ---------------------------------------------------------
+        
+        
         // Feedback only enabled if the Qorvo device started ranging
         if (!appSettings.audioHapticEnabled! || feedbackDisabled ) {
             return
