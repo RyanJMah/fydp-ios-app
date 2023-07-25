@@ -97,7 +97,6 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @IBOutlet weak var distanceLabel:  UILabel!
     @IBOutlet weak var azimuthLabel:   UILabel!
     @IBOutlet weak var elevationLabel: UILabel!
-    @IBOutlet weak var mqttLabel: UILabel!
     
     @IBOutlet weak var accessoriesTable: UITableView!
 
@@ -167,8 +166,6 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        mqttLabel.textColor = UIColor.black
         
         dataChannel.accessoryDataHandler = accessorySharedData
         
@@ -1144,13 +1141,11 @@ extension AccessoryDemoViewController: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
         mqtt.subscribe("$SYS/broker/uptime")
         //mqtt.subscribe("$SYS/broker/uptime", qos: CocoaMQTTQoS.qos1)
-        mqttLabel.text = "subscribed"
-        logger.info("subscribed\n")
+        print("LOOK AT ME THIS SHIT WORKS")
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 ) {
         if let msgString = message.string {
-            mqttLabel.text = msgString
             logger.info( "\(msgString)" )
         }
     }

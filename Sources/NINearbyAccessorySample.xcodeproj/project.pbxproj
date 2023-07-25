@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -150,7 +150,6 @@
 				3C6A9FF50233346CD3C2E1E5 /* Pods-Qorvo Nearby Interaction.debug.xcconfig */,
 				E703803953C7F2CE9D69CBE3 /* Pods-Qorvo Nearby Interaction.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -489,7 +488,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = TA89A489H8;
+				DEVELOPMENT_TEAM = M9C4K8V53K;
 				INFOPLIST_FILE = NINearbyAccessorySample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Qorvo Nearby Interaction";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -499,7 +498,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = QorvoDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = "GuidingLite.deez-nuts";
 				PRODUCT_NAME = "Qorvo NI AR";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -517,7 +516,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = TA89A489H8;
+				DEVELOPMENT_TEAM = M9C4K8V53K;
 				INFOPLIST_FILE = NINearbyAccessorySample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Qorvo Nearby Interaction";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -527,7 +526,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = QorvoDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = "GuidingLite.deez-nuts";
 				PRODUCT_NAME = "Qorvo NI AR";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
