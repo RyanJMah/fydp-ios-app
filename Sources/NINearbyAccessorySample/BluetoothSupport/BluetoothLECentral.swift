@@ -82,20 +82,41 @@ class CocoaMQTTInit: CocoaMQTTDelegate{
     // }
 }*/
 
-class MQTT {
-    var mqtt: CocoaMQTT!
-    var delegate: CocoaMQTTDelegate?
+class MQTTClient {
+    var mqtt: CocoaMQTT? = nil
+    var user_id: String? = nil
+
+    func initialize()
+    {
+        self.user_id = String(ProcessInfo().processIdentifier)
     
-    func setUpMQTT() {
-//        let clientID = "phone_CocoaMQTT-" + String(ProcessInfo().processIdentifier)
-        print("DOES THIS EVEN RUN????")
         let clientID = "GuidingLite_iOS_" + String(ProcessInfo().processIdentifier)
-        mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.2.2", port: 1883)
-        mqtt.logLevel = .info
-        mqtt.keepAlive = 60
-        let success = mqtt.connect(timeout: 60)
+        
+        self.mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.2.2", port: 1883)
+        self.mqtt?.logLevel = .info
+        self.mqtt?.keepAlive = 60
+    }
+    
+    func get_user_id() -> String?
+    {
+        return self.user_id
+    }
+    
+    func set_handler(_ delegate: CocoaMQTTDelegate)
+    {
+        self.mqtt?.delegate = delegate
+    }
+
+    func connect()
+    {
+        let success = mqtt?.connect(timeout: 60)
         print("CONNECTION STATUS: \(success)")
-//        mqtt.ping()
+    }
+    
+    func publish(_ topic: String, _ msg: String)
+    {
+        let msg = CocoaMQTTMessage(topic: topic, string: msg)
+        self.mqtt?.publish(msg)
     }
     
 }

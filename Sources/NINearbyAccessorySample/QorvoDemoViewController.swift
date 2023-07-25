@@ -89,9 +89,67 @@ protocol ArrowProtocol {
     func switchArrowImgView()
 }
 
+class GuidingLite_MqttHandler: CocoaMQTTDelegate {
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
+    {
+        print("SUCCESSFULLY CONNECTED TO BROKER!")
+
+        mqtt.subscribe("gl/anchor/+/heartbeat")
+    }
+    
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16)
+    {
+        
+    }
+    
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16)
+    {
+        
+    }
+    
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
+    {
+        
+    }
+    
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopics success: NSDictionary, failed: [String])
+    {
+        
+    }
+    
+    ///
+    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopics topics: [String])
+    {
+        
+    }
+    
+    ///
+    func mqttDidPing(_ mqtt: CocoaMQTT)
+    {
+        
+    }
+    
+    ///
+    func mqttDidReceivePong(_ mqtt: CocoaMQTT)
+    {
+        
+    }
+    
+    ///
+    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?)
+    {
+        
+    }
+}
+
 class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowProtocol,
                                    UITableViewDelegate, UITableViewDataSource {
-   
+    
     @IBOutlet weak var infoLabel:      UILabel!
     @IBOutlet weak var deviceLabel:    UILabel!
     @IBOutlet weak var distanceLabel:  UILabel!
@@ -99,7 +157,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @IBOutlet weak var elevationLabel: UILabel!
     
     @IBOutlet weak var accessoriesTable: UITableView!
-
+    
     @IBOutlet weak var arButton: UIButton!
     // Arrow View
     @IBOutlet weak var arrowImgView: SCNView!
@@ -151,7 +209,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     var curAzimuth: Int = 0
     var curElevation: Int = 0
     var curSpin: Int = 0
-
+    
     let logger = os.Logger(subsystem: "com.example.apple-samplecode.NINearbyAccessorySample", category: "AccessoryDemoViewController")
     
     let btnDisabled = "Disabled"
@@ -159,10 +217,10 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     let btnDisconnect = "Disconnect"
     let devNotConnected = "NO ACCESSORY CONNECTED"
     let scene = SCNScene(named: "3d_arrow.usdz")
-
-    var first_time_mqtt_init = true
-    var mqtt_client: MQTT = MQTT()
     
+    var first_time_mqtt_init = true
+    var mqtt_client: MQTTClient = MQTTClient()
+    var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -212,6 +270,13 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         // Initialises the Timer used for Haptic and Sound feedbacks
         _ = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
         
+        // GuidingLite: heartbeat timer
+        _ = Timer.scheduledTimer( timeInterval: 5,
+                                  target: self,
+                                  selector: #selector(self.send_mqtt_heartbeat),
+                                  userInfo: nil,
+                                  repeats: true )
+        
         // Initialises table to stack devices from qorvoDevices
         accessoriesTable.delegate   = self
         accessoriesTable.dataSource = self
@@ -228,6 +293,12 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         separatorView.addGestureRecognizer(upSwipe)
         separatorView.addGestureRecognizer(downSwipe)
         
+    }
+    
+    @objc func send_mqtt_heartbeat()
+    {
+        print("SENDING HEARTBEAT")
+        self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/heartbeat", "{status: \"online\"}")
     }
     
     func checkDirectionIsEnable(){
@@ -401,10 +472,10 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         // MQTT SHIT
         if ( self.first_time_mqtt_init )
         {
-            print("SDLKFJSLDFJLSDKFJSDLFKJS");
-            self.mqtt_client.delegate = self
-            self.mqtt_client.setUpMQTT()
-            print("DOES IT EVEN GET HERE???")
+            self.mqtt_client.initialize()
+
+            self.mqtt_client.set_handler(self.mqtt_handler)
+            self.mqtt_client.connect()
             
             self.first_time_mqtt_init = false
         }
@@ -1128,59 +1199,6 @@ extension AccessoryDemoViewController {
         // Preset the access alert.
         present(accessAlert, animated: true, completion: nil)
     }
-}
-
-extension AccessoryDemoViewController: CocoaMQTTDelegate {
-    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopics success: NSDictionary, failed: [String]) {
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopics topics: [String]) {
-    }
-    
-    // These two methods are all we care about for now
-    func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
-        mqtt.subscribe("$SYS/broker/uptime")
-        //mqtt.subscribe("$SYS/broker/uptime", qos: CocoaMQTTQoS.qos1)
-        print("LOOK AT ME THIS SHIT WORKS")
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 ) {
-        if let msgString = message.string {
-            logger.info( "\(msgString)" )
-        }
-    }
-    
-    // Other required methods for CocoaMQTTDelegate
-    func mqtt(_ mqtt: CocoaMQTT, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Void) {
-        completionHandler(true)
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
-    }
-  /*
-    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopic topic: String) {
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopic topic: String) {
-    }
-   */
-    func mqttDidPing(_ mqtt: CocoaMQTT) {
-    }
-    
-    func mqttDidReceivePong(_ mqtt: CocoaMQTT) {
-    }
-    
-    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?) {
-    }
-    
-    //func _console(_ info: String) {
-    //}
 }
 
 // MARK: - Utils.
