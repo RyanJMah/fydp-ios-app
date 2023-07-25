@@ -1,0 +1,5 @@
+use_frameworks!
+
+target 'Qorvo Nearby Interaction' do
+    pod 'CocoaMQTT'
+end
