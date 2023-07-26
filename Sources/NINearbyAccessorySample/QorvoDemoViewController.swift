@@ -90,12 +90,14 @@ protocol ArrowProtocol {
 }
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
+    var pathing_angle = 0.0
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
 
         mqtt.subscribe("gl/anchor/+/heartbeat")
+        mqtt.subscribe("gl/anchor/+/pathing")
     }
     
     ///
@@ -113,7 +115,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     ///
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
-        
+        pathing_angle = message.
     }
     
     ///
@@ -303,7 +305,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     @objc func send_distance_azimuth_mqtt(deviceID: Int)
     {
-        if selectedAccessory == deviceID {
+//        if selectedAccessory == deviceID {
             
             let currentDevice = dataChannel.getDeviceFromUniqueID(deviceID)
             if  currentDevice == nil { return }
@@ -352,32 +354,49 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
                 isLOS        = true
             }
 
+//            for case let cell as DeviceTableViewCell in accessoriesTable.visibleCells {
+//
+//                if cell.uniqueID == deviceID {
+//                    cell.distanceLabel.text = String(format: "%0.1f m", distance!)
+//                    cell.azimuthLabel.text  = String(format: "%d°", azimuth)
+//
+//                    // Update mini arrow
+//                    let radians: CGFloat = CGFloat(azimuth) * (.pi / 180)
+//                    cell.miniArrow.transform = CGAffineTransform(rotationAngle: radians)
+//                }
+//            }
             // Update Graphics
             setArrowAngle(newElevation: elevation, newAzimuth: azimuth)
 
             // Update Feedback Level
             setFeedbackLvl(distance: distance!)
             
+            let anchorID = [
+                138907685 : 0,
+                105947983 : 1,
+                139193728 : 2
+            ]
+            
             let distanceStr  = String(describing: distance!)
             let azimuthStr   = String(describing: azimuth)
             let elevationStr = String(describing: elevation)
             let isLOSStr     = String(describing: isLOS)
-            
+            let IDStr        = String(describing: anchorID[deviceID]!)
             
             print("SENDING DATA")
-            
             
             let dataJSON = """
             {
                 "distance": \(distanceStr),
                 "azimuth": \(azimuthStr),
                 "elevation": \(elevationStr),
-                "LOS": \(isLOSStr)
+                "LOS": \(isLOSStr),
+                "Anchor ID": \(IDStr)
             }
             """
             
-            self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data", dataJSON)
-        }
+            self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data/" + IDStr, dataJSON)
+//        }
     }
     
     func checkDirectionIsEnable(){
@@ -1121,8 +1140,20 @@ extension AccessoryDemoViewController: NISessionDelegate {
             updatedDevice.blePeripheralStatus = statusRanging
         }
         
+        // Get deviceID from anchor ID.
+        let deviceID_anchor = [
+            0 : 138907685,
+            1 : 105947983,
+            2 : 139193728
+        ]
+        
         updateLocationFields(deviceID)
-        send_distance_azimuth_mqtt(deviceID: deviceID)
+        
+        for i in 0...2 {
+            send_distance_azimuth_mqtt(deviceID: deviceID_anchor[i]!)
+        }
+        
+//        send_distance_azimuth_mqtt(deviceID: deviceID)
         updateMiniFields(deviceID)
         
     }
