@@ -301,6 +301,85 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/heartbeat", "{status: \"online\"}")
     }
     
+    @objc func send_distance_azimuth_mqtt(deviceID: Int)
+    {
+        if selectedAccessory == deviceID {
+            
+            let currentDevice = dataChannel.getDeviceFromUniqueID(deviceID)
+            if  currentDevice == nil { return }
+            
+            // Get updated location values
+            let distance  = currentDevice?.uwbLocation?.distance
+            let direction = currentDevice?.uwbLocation?.direction
+            
+            let azimuthCheck = azimuth((currentDevice?.uwbLocation?.direction)!)
+            
+            // Check if azimuth check calcul is a number (ie: not infinite)
+            if azimuthCheck.isNaN {
+                return
+            }
+            
+            var azimuth = 0
+            if Settings().isDirectionEnable {
+                azimuth =  Int( 90 * (Double(azimuthCheck)))
+            }else {
+                azimuth = Int(rad2deg(Double(azimuthCheck)))
+            }
+            
+
+            let elevation = Int(90 * elevation(direction!))
+            
+            // Update Label
+            distanceLabel.text = String(format: "%0.1f m", distance!)
+            azimuthLabel.text = String(format: "%d°", azimuth)
+            
+            //Update Elevation
+            if Settings().isDirectionEnable {
+                elevationLabel.text = String(format: "%d°", elevation)
+            }else {
+                elevationLabel.text = getElevationFromInt(elevation: currentDevice?.uwbLocation?.elevation)
+            }
+
+            var isLOS = false
+            if (currentDevice?.uwbLocation?.noUpdate)! {
+                azimuthLabel.textColor = .lightGray
+                elevationLabel.textColor = .lightGray
+                isLOS        = false
+            }
+            else {
+                azimuthLabel.textColor = .black
+                elevationLabel.textColor = .black
+                isLOS        = true
+            }
+
+            // Update Graphics
+            setArrowAngle(newElevation: elevation, newAzimuth: azimuth)
+
+            // Update Feedback Level
+            setFeedbackLvl(distance: distance!)
+            
+            let distanceStr  = String(describing: distance!)
+            let azimuthStr   = String(describing: azimuth)
+            let elevationStr = String(describing: elevation)
+            let isLOSStr     = String(describing: isLOS)
+            
+            
+            print("SENDING DATA")
+            
+            
+            let dataJSON = """
+            {
+                "distance": \(distanceStr),
+                "azimuth": \(azimuthStr),
+                "elevation": \(elevationStr),
+                "LOS": \(isLOSStr)
+            }
+            """
+            
+            self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data", dataJSON)
+        }
+    }
+    
     func checkDirectionIsEnable(){
         // if NISession device direction capabilities is disabled
         if !appSettings.isDirectionEnable {
@@ -1043,6 +1122,7 @@ extension AccessoryDemoViewController: NISessionDelegate {
         }
         
         updateLocationFields(deviceID)
+        send_distance_azimuth_mqtt(deviceID: deviceID)
         updateMiniFields(deviceID)
         
     }
