@@ -88,11 +88,11 @@ class MQTTClient {
 
     func initialize()
     {
-        self.user_id = String(ProcessInfo().processIdentifier)
+        self.user_id = String(0)
     
         let clientID = "GuidingLite_iOS_" + String(ProcessInfo().processIdentifier)
         
-        self.mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.2.2", port: 1883)
+        self.mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.8.2", port: 1883)
         self.mqtt?.logLevel = .info
         self.mqtt?.keepAlive = 60
     }
