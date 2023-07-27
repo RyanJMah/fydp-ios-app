@@ -57,6 +57,28 @@ import CoreHaptics
 import CoreAudio
 import os.log
 import CocoaMQTT
+import Foundation
+
+func decodeJSONString(_ jsonString: String) -> [String: Any]? {
+    // Step 1: Convert the JSON string to Data
+    guard let jsonData = jsonString.data(using: .utf8) else {
+        print("Failed to convert JSON string to Data.")
+        return nil
+    }
+    
+    // Step 2: Use JSONSerialization to parse Data into a dictionary
+    do {
+        if let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
+            return jsonObject
+        } else {
+            print("Failed to convert JSON data to a dictionary.")
+            return nil
+        }
+    } catch {
+        print("Error parsing JSON: \(error)")
+        return nil
+    }
+}
 
 // An example messaging protocol for communications between the app and the
 // accessory. In your app, modify or extend this enumeration to your app's
@@ -90,14 +112,14 @@ protocol ArrowProtocol {
 }
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
-    var pathing_angle = 0.0
+    var direction = ""
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
 
         mqtt.subscribe("gl/anchor/+/heartbeat")
-        mqtt.subscribe("gl/anchor/+/pathing")
+        mqtt.subscribe("gl/user/+/pathing")
     }
     
     ///
@@ -115,7 +137,23 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     ///
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
-//        pathing_angle = message.
+        if(message.topic == "gl/user/0/pathing") {
+            print("my message is: " + String(message.string!))
+        }
+        let jsonString = message.string
+
+        if (message.topic == "gl/user/0/pathing")
+        {
+            if let decodedDictionary = decodeJSONString(jsonString!)
+            {
+                direction = decodedDictionary["direction"] as! String
+                print("Direction: \(decodedDictionary["direction"]!)")
+            }
+            else
+            {
+//                print("Failed to decode JSON string.")
+            }
+        }
     }
     
     ///
@@ -155,6 +193,8 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @IBOutlet weak var infoLabel:      UILabel!
     @IBOutlet weak var deviceLabel:    UILabel!
     @IBOutlet weak var distanceLabel:  UILabel!
+    @IBOutlet weak var turnLabel:      UILabel!
+    
     @IBOutlet weak var azimuthLabel:   UILabel!
     @IBOutlet weak var elevationLabel: UILabel!
     
@@ -1101,6 +1141,9 @@ extension AccessoryDemoViewController: NISessionDelegate {
 //            print("UUID = \(updatedDevice.blePeripheral.identifier)")
             send_distance_azimuth_mqtt(deviceID: deviceID, gl_ID: updatedDevice.guidingLite_ID)
         }
+        
+        // Update location label
+        turnLabel.text = mqtt_handler.direction
         
         // Get deviceID from anchor ID.
         updateLocationFields(deviceID)
