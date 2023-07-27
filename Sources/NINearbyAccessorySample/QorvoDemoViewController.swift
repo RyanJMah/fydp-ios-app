@@ -299,9 +299,15 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     @objc func send_mqtt_heartbeat()
     {
-        print("SENDING HEARTBEAT")
-        self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/heartbeat", "{status: \"online\"}")
-    }
+        DispatchQueue.global(qos: .default).async
+        {
+            self.mqtt_client.publish( "gl/user/" +
+                                      self.mqtt_client.get_user_id()! +
+                                      "/heartbeat",
+                                      "{status: \"online\"}" )
+ 
+        }
+   }
     
     @objc func send_distance_azimuth_mqtt(deviceID: Int, gl_ID: Int)
     {
@@ -355,7 +361,14 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
         """
         
-        self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data/" + IDStr, dataJSON)
+        DispatchQueue.global(qos: .userInteractive).async
+        {
+            self.mqtt_client.publish( "gl/user/" +
+                                      self.mqtt_client.get_user_id()! +
+                                      "/data/" + IDStr,
+                                      dataJSON )
+        }
+
     }
     
     func checkDirectionIsEnable(){
