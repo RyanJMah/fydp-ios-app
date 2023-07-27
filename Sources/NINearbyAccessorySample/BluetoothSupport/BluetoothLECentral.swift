@@ -55,71 +55,6 @@ import NearbyInteraction
 import CoreBluetooth
 import simd
 import os
-import CocoaMQTT
-
-/*
-class CocoaMQTTInit: CocoaMQTTDelegate{
-    
-    let mqtt: CocoaMQTT
-    
-    init() {
-        /// MQTT 3.1.1
-        let clientID = "CocoaMQTT-" + String(ProcessInfo().processIdentifier)
-        mqtt = CocoaMQTT(clientID: clientID, host: "broker.emqx.io", port: 1883)
-        // mqtt.username = "test"
-        // mqtt.password = "public"
-        // mqtt.willMessage = CocoaMQTTWill(topic: "/will", message: "dieout")
-        mqtt.keepAlive = 60
-        mqtt.delegate = self
-        mqtt.connect()
-    }
-    
-    // Implement required delegate methods here
-    
-    // Example:
-    // func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
-    //     // Handle connection acknowledgment
-    // }
-}*/
-
-class MQTTClient {
-    var mqtt: CocoaMQTT? = nil
-    var user_id: String? = nil
-
-    func initialize()
-    {
-        self.user_id = String(69)
-    
-        let clientID = "GuidingLite_iOS_" + self.user_id!
-        
-        self.mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.8.2", port: 1883)
-        self.mqtt?.logLevel = .info
-        self.mqtt?.keepAlive = 60
-    }
-    
-    func get_user_id() -> String?
-    {
-        return self.user_id
-    }
-    
-    func set_handler(_ delegate: CocoaMQTTDelegate)
-    {
-        self.mqtt?.delegate = delegate
-    }
-
-    func connect()
-    {
-        let success = mqtt?.connect(timeout: 60)
-        print("CONNECTION STATUS: \(success)")
-    }
-    
-    func publish(_ topic: String, _ msg: String)
-    {
-        let msg = CocoaMQTTMessage(topic: topic, string: msg)
-        self.mqtt?.publish(msg)
-    }
-    
-}
 
 struct TransferService {
     static let serviceUUID = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")
@@ -155,13 +90,13 @@ class qorvoDevice {
     var bleTimestamp: Int64                  // Last time that the device adverstised
     var uwbLocation: Location?
     
-    var guidingLite_ID: Int
+    var GuidingLite_aid: Int
     
     init( peripheral: CBPeripheral,
           uniqueID: Int,
           peripheralName: String,
           timeStamp: Int64,
-          guidingLite_Id: Int) {
+          aID: Int) {
         
         self.blePeripheral = peripheral
         self.bleUniqueID = uniqueID
@@ -172,7 +107,7 @@ class qorvoDevice {
                                     direction: SIMD3<Float>(x: 0, y: 0, z: 0), elevation: NINearbyObject.VerticalDirectionEstimate.unknown.rawValue,
                                     noUpdate: false)
         
-        self.guidingLite_ID = guidingLite_Id
+        self.GuidingLite_aid = aID
     }
 }
 
@@ -448,22 +383,23 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
             return
         }
 
-        let uuid_to_gl_id_map = [
-            "2089D359-4C89-12C0-4235-4AA9C808B9C0": 0,
-            "24CE2A7A-E7D0-FB31-831F-BC205FA048B4": 1,
-            "B6B5E55B-4047-8A3D-37D0-8E576634C91F": 2,
-            "6EDD739F-BADE-220F-3B3F-262D592A2D97": 3,
-
-        ]
-        let uuid_str = peripheral.identifier.uuidString
-
         // If not discovered, include peripheral to qorvoDevices[]
         let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
+
+        let dev_name = name ?? "Unknown"
+        
+        var aID = -1
+        if ( dev_name.contains("GL_Anchor") )
+        {
+            aID = Int( dev_name.components(separatedBy: "_")[2] )!
+            print("Adding anchor \(aID)")
+        }
+        
         qorvoDevices.append(qorvoDevice(peripheral: peripheral,
                                         uniqueID: peripheral.hashValue,
-                                        peripheralName: name ?? "Unknown",
+                                        peripheralName: dev_name,
                                         timeStamp: timeStamp,
-                                        guidingLite_Id: uuid_to_gl_id_map[uuid_str]! ))
+                                        aID: aID ))
         
         if let newPeripheral = qorvoDevices.last {
             let nameToPrint = newPeripheral?.blePeripheralName

@@ -34,6 +34,7 @@
 		6D85D2B927C3A07100220F5D /* Linotype - DINNextLTPro-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6D85D2AB27C3A07100220F5D /* Linotype - DINNextLTPro-LightItalic.otf */; };
 		6D85D2BA27C3A07100220F5D /* Linotype - DINNextLTPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6D85D2AC27C3A07100220F5D /* Linotype - DINNextLTPro-Light.otf */; };
 		6DD8E87927E8D04D00981050 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD8E87827E8D04D00981050 /* CustomActivityIndicator.swift */; };
+		95C4B81F2A724B4A0056B477 /* GuidingLite_MQTT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */; };
 		A9A7C756227E1D6200F2CC59 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9A7C755227E1D6200F2CC59 /* README.md */; };
 		F0B28D1C7D918BD9F6584239 /* Pods_Qorvo_Nearby_Interaction.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0F6EC761C87519091BC5161 /* Pods_Qorvo_Nearby_Interaction.framework */; };
 /* End PBXBuildFile section */
@@ -69,6 +70,7 @@
 		6D85D2AB27C3A07100220F5D /* Linotype - DINNextLTPro-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Linotype - DINNextLTPro-LightItalic.otf"; sourceTree = "<group>"; };
 		6D85D2AC27C3A07100220F5D /* Linotype - DINNextLTPro-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Linotype - DINNextLTPro-Light.otf"; sourceTree = "<group>"; };
 		6DD8E87827E8D04D00981050 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
+		95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_MQTT.swift; sourceTree = "<group>"; };
 		A9A7C755227E1D6200F2CC59 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D0F6EC761C87519091BC5161 /* Pods_Qorvo_Nearby_Interaction.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Qorvo_Nearby_Interaction.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E703803953C7F2CE9D69CBE3 /* Pods-Qorvo Nearby Interaction.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qorvo Nearby Interaction.release.xcconfig"; path = "Target Support Files/Pods-Qorvo Nearby Interaction/Pods-Qorvo Nearby Interaction.release.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				012C306E226FD13B00BADEF9 /* Assets.xcassets */,
 				012C3070226FD13B00BADEF9 /* LaunchScreen.storyboard */,
 				012C3073226FD13B00BADEF9 /* Info.plist */,
+				95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */,
 			);
 			path = NINearbyAccessorySample;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				6D4B60E428170EE800D0B1C1 /* DeviceTableViewCell.swift in Sources */,
 				3A5E19872606CD0000837A4A /* QorvoDemoViewController.swift in Sources */,
 				012C3068226FD13B00BADEF9 /* AppDelegate.swift in Sources */,
+				95C4B81F2A724B4A0056B477 /* GuidingLite_MQTT.swift in Sources */,
 				6DD8E87927E8D04D00981050 /* CustomActivityIndicator.swift in Sources */,
 				6D85D29E27BFB37800220F5D /* SettingsViewController.swift in Sources */,
 			);
@@ -488,7 +492,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = J4Z8H37GZ3;
+				DEVELOPMENT_TEAM = M9C4K8V53K;
 				INFOPLIST_FILE = NINearbyAccessorySample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Qorvo Nearby Interaction";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
@@ -498,7 +502,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = "GuidingLite.deez-nuts.3";
+				PRODUCT_BUNDLE_IDENTIFIER = "GuidingLite.deez-nuts";
 				PRODUCT_NAME = "Qorvo NI AR";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

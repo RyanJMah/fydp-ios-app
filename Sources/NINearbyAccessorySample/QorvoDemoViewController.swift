@@ -111,82 +111,6 @@ protocol ArrowProtocol {
     func switchArrowImgView()
 }
 
-class GuidingLite_MqttHandler: CocoaMQTTDelegate {
-    var direction = ""
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
-    {
-        print("SUCCESSFULLY CONNECTED TO BROKER!")
-
-        mqtt.subscribe("gl/anchor/+/heartbeat")
-        mqtt.subscribe("gl/user/+/pathing")
-    }
-    
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16)
-    {
-        
-    }
-    
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16)
-    {
-        
-    }
-    
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
-    {
-        if(message.topic == "gl/user/0/pathing") {
-            print("my message is: " + String(message.string!))
-        }
-        let jsonString = message.string
-
-        if (message.topic == "gl/user/0/pathing")
-        {
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                direction = decodedDictionary["direction"] as! String
-                print("Direction: \(decodedDictionary["direction"]!)")
-            }
-            else
-            {
-//                print("Failed to decode JSON string.")
-            }
-        }
-    }
-    
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopics success: NSDictionary, failed: [String])
-    {
-        
-    }
-    
-    ///
-    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopics topics: [String])
-    {
-        
-    }
-    
-    ///
-    func mqttDidPing(_ mqtt: CocoaMQTT)
-    {
-        
-    }
-    
-    ///
-    func mqttDidReceivePong(_ mqtt: CocoaMQTT)
-    {
-        
-    }
-    
-    ///
-    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?)
-    {
-        
-    }
-}
-
 class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowProtocol,
                                    UITableViewDelegate, UITableViewDataSource {
     
@@ -339,18 +263,21 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     @objc func send_mqtt_heartbeat()
     {
+        print("SEND HEARTBEAT")
         DispatchQueue.global(qos: .default).async
         {
-            self.mqtt_client.publish( "gl/user/" +
-                                      self.mqtt_client.get_user_id()! +
-                                      "/heartbeat",
-                                      "{status: \"online\"}" )
+            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
  
         }
-   }
+    }
     
-    @objc func send_distance_azimuth_mqtt(deviceID: Int, gl_ID: Int)
+    @objc func send_distance_azimuth_mqtt(deviceID: Int, aID: Int)
     {
+        if (aID == -1)
+        {
+            return
+        }
+        
         let currentDevice = dataChannel.getDeviceFromUniqueID(deviceID)
         if  currentDevice == nil { return }
         
@@ -387,25 +314,20 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         let azimuthStr   = String(describing: azimuth)
         let elevationStr = String(describing: elevation)
         let isLOSStr     = String(describing: isLOS)
-        let IDStr        = String(describing: gl_ID)
-        
-        print("SENDING DATA")
         
         let dataJSON = """
         {
             "distance": \(distanceStr),
             "azimuth": \(azimuthStr),
             "elevation": \(elevationStr),
-            "LOS": \(isLOSStr),
-            "Anchor ID": \(IDStr)
+            "LOS": \(isLOSStr)
         }
         """
+        print("LSKDFJLSDKFJLSDKFJ")
         
         DispatchQueue.global(qos: .userInteractive).async
         {
-            self.mqtt_client.publish( "gl/user/" +
-                                      self.mqtt_client.get_user_id()! +
-                                      "/data/" + IDStr,
+            self.mqtt_client.publish( DATA_TOPIC_BASE + String(aID),
                                       dataJSON )
         }
 
@@ -1152,7 +1074,8 @@ extension AccessoryDemoViewController: NISessionDelegate {
             updatedDevice.blePeripheralStatus = statusRanging
     
 //            print("UUID = \(updatedDevice.blePeripheral.identifier)")
-            send_distance_azimuth_mqtt(deviceID: deviceID, gl_ID: updatedDevice.guidingLite_ID)
+            print("anchor id = \(updatedDevice.GuidingLite_aid)")
+            send_distance_azimuth_mqtt(deviceID: deviceID, aID: updatedDevice.GuidingLite_aid)
         }
         
         // Update location label
