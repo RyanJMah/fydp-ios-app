@@ -463,7 +463,7 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
                                         uniqueID: peripheral.hashValue,
                                         peripheralName: name ?? "Unknown",
                                         timeStamp: timeStamp,
-                                        guidingLite_Id: 0 ))
+                                        guidingLite_Id: uuid_to_gl_id_map[uuid_str]! ))
         
         if let newPeripheral = qorvoDevices.last {
             let nameToPrint = newPeripheral?.blePeripheralName
