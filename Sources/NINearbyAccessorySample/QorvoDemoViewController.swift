@@ -115,7 +115,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     ///
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
-        pathing_angle = message.
+//        pathing_angle = message.
     }
     
     ///
@@ -303,100 +303,59 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/heartbeat", "{status: \"online\"}")
     }
     
-    @objc func send_distance_azimuth_mqtt(deviceID: Int)
+    @objc func send_distance_azimuth_mqtt(deviceID: Int, gl_ID: Int)
     {
-//        if selectedAccessory == deviceID {
-            
-            let currentDevice = dataChannel.getDeviceFromUniqueID(deviceID)
-            if  currentDevice == nil { return }
-            
-            // Get updated location values
-            let distance  = currentDevice?.uwbLocation?.distance
-            let direction = currentDevice?.uwbLocation?.direction
-            
-            let azimuthCheck = azimuth((currentDevice?.uwbLocation?.direction)!)
-            
-            // Check if azimuth check calcul is a number (ie: not infinite)
-            if azimuthCheck.isNaN {
-                return
-            }
-            
-            var azimuth = 0
-            if Settings().isDirectionEnable {
-                azimuth =  Int( 90 * (Double(azimuthCheck)))
-            }else {
-                azimuth = Int(rad2deg(Double(azimuthCheck)))
-            }
-            
+        let currentDevice = dataChannel.getDeviceFromUniqueID(deviceID)
+        if  currentDevice == nil { return }
+        
+        // Get updated location values
+        let distance  = currentDevice?.uwbLocation?.distance
+        let direction = currentDevice?.uwbLocation?.direction
+        
+        let azimuthCheck = azimuth((currentDevice?.uwbLocation?.direction)!)
+        
+        // Check if azimuth check calcul is a number (ie: not infinite)
+        if azimuthCheck.isNaN {
+            return
+        }
+        
+        var azimuth = 0
+        if Settings().isDirectionEnable {
+            azimuth =  Int( 90 * (Double(azimuthCheck)))
+        }else {
+            azimuth = Int(rad2deg(Double(azimuthCheck)))
+        }
+        
 
-            let elevation = Int(90 * elevation(direction!))
-            
-            // Update Label
-            distanceLabel.text = String(format: "%0.1f m", distance!)
-            azimuthLabel.text = String(format: "%d°", azimuth)
-            
-            //Update Elevation
-            if Settings().isDirectionEnable {
-                elevationLabel.text = String(format: "%d°", elevation)
-            }else {
-                elevationLabel.text = getElevationFromInt(elevation: currentDevice?.uwbLocation?.elevation)
-            }
+        let elevation = Int(90 * elevation(direction!))
 
-            var isLOS = false
-            if (currentDevice?.uwbLocation?.noUpdate)! {
-                azimuthLabel.textColor = .lightGray
-                elevationLabel.textColor = .lightGray
-                isLOS        = false
-            }
-            else {
-                azimuthLabel.textColor = .black
-                elevationLabel.textColor = .black
-                isLOS        = true
-            }
-
-//            for case let cell as DeviceTableViewCell in accessoriesTable.visibleCells {
-//
-//                if cell.uniqueID == deviceID {
-//                    cell.distanceLabel.text = String(format: "%0.1f m", distance!)
-//                    cell.azimuthLabel.text  = String(format: "%d°", azimuth)
-//
-//                    // Update mini arrow
-//                    let radians: CGFloat = CGFloat(azimuth) * (.pi / 180)
-//                    cell.miniArrow.transform = CGAffineTransform(rotationAngle: radians)
-//                }
-//            }
-            // Update Graphics
-            setArrowAngle(newElevation: elevation, newAzimuth: azimuth)
-
-            // Update Feedback Level
-            setFeedbackLvl(distance: distance!)
-            
-            let anchorID = [
-                138907685 : 0,
-                105947983 : 1,
-                139193728 : 2
-            ]
-            
-            let distanceStr  = String(describing: distance!)
-            let azimuthStr   = String(describing: azimuth)
-            let elevationStr = String(describing: elevation)
-            let isLOSStr     = String(describing: isLOS)
-            let IDStr        = String(describing: anchorID[deviceID]!)
-            
-            print("SENDING DATA")
-            
-            let dataJSON = """
-            {
-                "distance": \(distanceStr),
-                "azimuth": \(azimuthStr),
-                "elevation": \(elevationStr),
-                "LOS": \(isLOSStr),
-                "Anchor ID": \(IDStr)
-            }
-            """
-            
-            self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data/" + IDStr, dataJSON)
-//        }
+        var isLOS = false
+        if (currentDevice?.uwbLocation?.noUpdate)! {
+            isLOS        = false
+        }
+        else {
+            isLOS        = true
+        }
+        
+        let distanceStr  = String(describing: distance!)
+        let azimuthStr   = String(describing: azimuth)
+        let elevationStr = String(describing: elevation)
+        let isLOSStr     = String(describing: isLOS)
+        let IDStr        = String(describing: gl_ID)
+        
+        print("SENDING DATA")
+        
+        let dataJSON = """
+        {
+            "distance": \(distanceStr),
+            "azimuth": \(azimuthStr),
+            "elevation": \(elevationStr),
+            "LOS": \(isLOSStr),
+            "Anchor ID": \(IDStr)
+        }
+        """
+        
+        self.mqtt_client.publish("gl/user/" + self.mqtt_client.get_user_id()! + "/data/" + IDStr, dataJSON)
     }
     
     func checkDirectionIsEnable(){
@@ -1138,20 +1097,16 @@ extension AccessoryDemoViewController: NISessionDelegate {
             }
     
             updatedDevice.blePeripheralStatus = statusRanging
+    
+//            print("UUID = \(updatedDevice.blePeripheral.identifier)")
+            send_distance_azimuth_mqtt(deviceID: deviceID, gl_ID: updatedDevice.guidingLite_ID)
         }
         
         // Get deviceID from anchor ID.
-        let deviceID_anchor = [
-            0 : 138907685,
-            1 : 105947983,
-            2 : 139193728
-        ]
-        
         updateLocationFields(deviceID)
-        
-        for i in 0...2 {
-            send_distance_azimuth_mqtt(deviceID: deviceID_anchor[i]!)
-        }
+    
+    
+//        send_distance_azimuth_mqtt(deviceID: deviceID, gl_ID: id_map[deviceID]!)
         
 //        send_distance_azimuth_mqtt(deviceID: deviceID)
         updateMiniFields(deviceID)

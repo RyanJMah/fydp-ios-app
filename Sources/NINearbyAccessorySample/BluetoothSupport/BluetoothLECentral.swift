@@ -88,9 +88,9 @@ class MQTTClient {
 
     func initialize()
     {
-        self.user_id = String(0)
+        self.user_id = String(69)
     
-        let clientID = "GuidingLite_iOS_" + String(ProcessInfo().processIdentifier)
+        let clientID = "GuidingLite_iOS_" + self.user_id!
         
         self.mqtt = CocoaMQTT.init(clientID: clientID, host: "192.168.8.2", port: 1883)
         self.mqtt?.logLevel = .info
@@ -155,7 +155,13 @@ class qorvoDevice {
     var bleTimestamp: Int64                  // Last time that the device adverstised
     var uwbLocation: Location?
     
-    init(peripheral: CBPeripheral, uniqueID: Int, peripheralName: String, timeStamp: Int64 ) {
+    var guidingLite_ID: Int
+    
+    init( peripheral: CBPeripheral,
+          uniqueID: Int,
+          peripheralName: String,
+          timeStamp: Int64,
+          guidingLite_Id: Int) {
         
         self.blePeripheral = peripheral
         self.bleUniqueID = uniqueID
@@ -165,6 +171,8 @@ class qorvoDevice {
         self.uwbLocation = Location(distance: 0,
                                     direction: SIMD3<Float>(x: 0, y: 0, z: 0), elevation: NINearbyObject.VerticalDirectionEstimate.unknown.rawValue,
                                     noUpdate: false)
+        
+        self.guidingLite_ID = guidingLite_Id
     }
 }
 
@@ -439,13 +447,23 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
             
             return
         }
-        
+
+        let uuid_to_gl_id_map = [
+            "2089D359-4C89-12C0-4235-4AA9C808B9C0": 0,
+            "24CE2A7A-E7D0-FB31-831F-BC205FA048B4": 1,
+            "B6B5E55B-4047-8A3D-37D0-8E576634C91F": 2,
+            "6EDD739F-BADE-220F-3B3F-262D592A2D97": 3,
+
+        ]
+        let uuid_str = peripheral.identifier.uuidString
+
         // If not discovered, include peripheral to qorvoDevices[]
         let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String
         qorvoDevices.append(qorvoDevice(peripheral: peripheral,
                                         uniqueID: peripheral.hashValue,
                                         peripheralName: name ?? "Unknown",
-                                        timeStamp: timeStamp))
+                                        timeStamp: timeStamp,
+                                        guidingLite_Id: uuid_to_gl_id_map[uuid_str]! ))
         
         if let newPeripheral = qorvoDevices.last {
             let nameToPrint = newPeripheral?.blePeripheralName
