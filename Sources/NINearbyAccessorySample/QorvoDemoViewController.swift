@@ -237,7 +237,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         _ = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
         
         // GuidingLite: heartbeat timer
-        _ = Timer.scheduledTimer( timeInterval: 5,
+        _ = Timer.scheduledTimer( timeInterval: 10,
                                   target: self,
                                   selector: #selector(self.send_mqtt_heartbeat),
                                   userInfo: nil,
@@ -263,11 +263,9 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     @objc func send_mqtt_heartbeat()
     {
-        print("SEND HEARTBEAT")
         DispatchQueue.global(qos: .default).async
         {
             self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
- 
         }
     }
     
@@ -304,31 +302,26 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
 
         var isLOS = false
         if (currentDevice?.uwbLocation?.noUpdate)! {
-            isLOS        = false
+            isLOS = false
         }
         else {
-            isLOS        = true
+            isLOS = true
         }
         
-        let distanceStr  = String(describing: distance!)
-        let azimuthStr   = String(describing: azimuth)
-        let elevationStr = String(describing: elevation)
-        let isLOSStr     = String(describing: isLOS)
-        
-        let dataJSON = """
-        {
-            "distance": \(distanceStr),
-            "azimuth": \(azimuthStr),
-            "elevation": \(elevationStr),
-            "LOS": \(isLOSStr)
-        }
-        """
-        print("LSKDFJLSDKFJLSDKFJ")
+        let telem_data = TelemetryData( distance_m: distance!,
+                                        azimuth_deg: Int16(azimuth),
+                                        elevation_deg: Int16(elevation),
+                                        los: isLOS )
         
         DispatchQueue.global(qos: .userInteractive).async
         {
-            self.mqtt_client.publish( DATA_TOPIC_BASE + String(aID),
-                                      dataJSON )
+            let telem_data_copy = telem_data
+            let telem_bytes = TelemetryData_ToBytes(telem_data_copy)
+            
+            self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aID),
+                                            telem_bytes )
+            
+//            self.mqtt_client.publish( DATA_TOPIC_BASE + String(aID) + "sdlkfj", dataJSON )
         }
 
     }
@@ -1073,21 +1066,13 @@ extension AccessoryDemoViewController: NISessionDelegate {
     
             updatedDevice.blePeripheralStatus = statusRanging
     
-//            print("UUID = \(updatedDevice.blePeripheral.identifier)")
-            print("anchor id = \(updatedDevice.GuidingLite_aid)")
             send_distance_azimuth_mqtt(deviceID: deviceID, aID: updatedDevice.GuidingLite_aid)
         }
         
         // Update location label
         turnLabel.text = mqtt_handler.direction
         
-        // Get deviceID from anchor ID.
         updateLocationFields(deviceID)
-    
-    
-//        send_distance_azimuth_mqtt(deviceID: deviceID, gl_ID: id_map[deviceID]!)
-        
-//        send_distance_azimuth_mqtt(deviceID: deviceID)
         updateMiniFields(deviceID)
         
     }

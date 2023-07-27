@@ -15,6 +15,20 @@ let HEARTBEAT_TOPIC = "gl/user/\(USER_ID)/heartbeat"
 let PATHING_TOPIC   = "gl/user/\(USER_ID)/pathing"
 let DATA_TOPIC_BASE = "gl/user/\(USER_ID)/data/"
 
+
+struct TelemetryData {
+    let distance_m:    Float
+    let azimuth_deg:   Int16
+    let elevation_deg: Int16
+    let los:           Bool
+}
+
+// Function to convert the struct into [UInt8]
+func TelemetryData_ToBytes(_ telemetry: TelemetryData) -> [UInt8] {
+    var copy = telemetry
+    return withUnsafeBytes(of: &copy) { Array($0) }
+}
+
 class MQTTClient {
     var mqtt: CocoaMQTT? = nil
     var user_id = USER_ID
@@ -44,7 +58,12 @@ class MQTTClient {
         let msg = CocoaMQTTMessage(topic: topic, string: msg)
         self.mqtt?.publish(msg)
     }
-    
+
+    func publish_bytes(_ topic: String, _ msg: [UInt8])
+    {
+        let msg = CocoaMQTTMessage(topic: topic, payload: msg)
+        self.mqtt?.publish(msg)
+    }
 }
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
