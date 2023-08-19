@@ -388,6 +388,11 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
 
         let dev_name = name ?? "Unknown"
         
+        if (dev_name == "Unknown")
+        {
+            return
+        }
+        
         var aID = -1
         if ( dev_name.contains("GL_Anchor") )
         {
