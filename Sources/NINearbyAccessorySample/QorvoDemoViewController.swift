@@ -187,6 +187,8 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     var first_time_mqtt_init = true
     var mqtt_client: MQTTClient = MQTTClient()
     var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
+
+    var sensing: GuidingLite_OrientationSensor = GuidingLite_OrientationSensor()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -242,6 +244,13 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
                                   selector: #selector(self.send_mqtt_heartbeat),
                                   userInfo: nil,
                                   repeats: true )
+
+        // GuidingLite: timer for performing sensing + sending sensing data to telemetry
+        _ = Timer.scheduledTimer( timeInterval: 0.5,
+                                  target: self,
+                                  selector: #selector(self.sensing_timer_handler),
+                                  userInfo: nil,
+                                  repeats: true )
         
         // Initialises table to stack devices from qorvoDevices
         accessoriesTable.delegate   = self
@@ -259,6 +268,20 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         separatorView.addGestureRecognizer(upSwipe)
         separatorView.addGestureRecognizer(downSwipe)
         
+    }
+
+    @objc func sensing_timer_handler()
+    {
+        DispatchQueue.global(qos: .userInteractive).async
+        {
+            let angle = self.sensing.get_orientation()
+
+            // print the angle
+            if (angle != nil)
+            {
+                print("angle: \(angle!)")
+            }
+        }
     }
     
     @objc func send_mqtt_heartbeat()
