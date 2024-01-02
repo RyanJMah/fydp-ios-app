@@ -11,6 +11,7 @@ import CocoaMQTT
 
 let USER_ID = 69
 
+let HEADING_TOPIC   = "gl/user/\(USER_ID)/heading"
 let HEARTBEAT_TOPIC = "gl/user/\(USER_ID)/heartbeat"
 let PATHING_TOPIC   = "gl/user/\(USER_ID)/pathing"
 let DATA_TOPIC_BASE = "gl/user/\(USER_ID)/data/"
@@ -28,6 +29,16 @@ func TelemetryData_ToBytes(_ telemetry: TelemetryData) -> [UInt8] {
     var copy = telemetry
     return withUnsafeBytes(of: &copy) { Array($0) }
 }
+
+struct HeadingData {
+    let angle: Float
+}
+
+func HeadingData_ToBytes(_ heading: HeadingData) -> [UInt8] {
+    var copy = heading
+    return withUnsafeBytes(of: &copy) { Array($0) }
+}
+
 
 class MQTTClient {
     var mqtt: CocoaMQTT? = nil

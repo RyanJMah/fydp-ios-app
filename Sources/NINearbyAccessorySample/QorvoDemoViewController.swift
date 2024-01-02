@@ -279,7 +279,12 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
             // print the angle
             if (angle != nil)
             {
-                print("angle: \(angle!)")
+                // print("angle: \(angle!)")
+
+                let heading_data = HeadingData( angle: Float(angle!) )
+                let heading_bytes = HeadingData_ToBytes(heading_data)
+
+                self.mqtt_client.publish_bytes( HEADING_TOPIC, heading_bytes )
             }
         }
     }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -35,7 +35,6 @@
 		95C4B81F2A724B4A0056B477 /* GuidingLite_MQTT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */; };
 		95E271A02AD2C507004E3917 /* NearbyInteraction.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E2719F2AD2C507004E3917 /* NearbyInteraction.framework */; };
 		95E271A22AD2C510004E3917 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E271A12AD2C510004E3917 /* CoreBluetooth.framework */; };
-		95E271A42AD2C6F6004E3917 /* NINearbyAccessorySample in Resources */ = {isa = PBXBuildFile; fileRef = 95E271A32AD2C6F6004E3917 /* NINearbyAccessorySample */; };
 		95E7E9742AD2BE0400D17449 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7E9732AD2BE0400D17449 /* CoreLocation.framework */; };
 		95E7E9762AD2BEA100D17449 /* GuidingLite_Sensing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E7E9752AD2BEA100D17449 /* GuidingLite_Sensing.swift */; };
 		A9A7C756227E1D6200F2CC59 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9A7C755227E1D6200F2CC59 /* README.md */; };
@@ -74,7 +73,6 @@
 		95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_MQTT.swift; sourceTree = "<group>"; };
 		95E2719F2AD2C507004E3917 /* NearbyInteraction.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NearbyInteraction.framework; path = System/Library/Frameworks/NearbyInteraction.framework; sourceTree = SDKROOT; };
 		95E271A12AD2C510004E3917 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		95E271A32AD2C6F6004E3917 /* NINearbyAccessorySample */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NINearbyAccessorySample; sourceTree = "<group>"; };
 		95E7E9732AD2BE0400D17449 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		95E7E9752AD2BEA100D17449 /* GuidingLite_Sensing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_Sensing.swift; sourceTree = "<group>"; };
 		A9A7C755227E1D6200F2CC59 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -135,7 +133,6 @@
 				012C3073226FD13B00BADEF9 /* Info.plist */,
 				95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */,
 				95E7E9752AD2BEA100D17449 /* GuidingLite_Sensing.swift */,
-				95E271A32AD2C6F6004E3917 /* NINearbyAccessorySample */,
 			);
 			path = NINearbyAccessorySample;
 			sourceTree = "<group>";
@@ -277,7 +274,6 @@
 				6D85D2B827C3A07100220F5D /* Linotype - DINNextLTPro-Regular.otf in Resources */,
 				6D85D2AD27C3A07100220F5D /* Linotype - DINNextLTPro-MediumItalic.otf in Resources */,
 				6D85D2B227C3A07100220F5D /* Linotype - DINNextLTPro-UltraLight.otf in Resources */,
-				95E271A42AD2C6F6004E3917 /* NINearbyAccessorySample in Resources */,
 				6D85D2B427C3A07100220F5D /* Linotype - DINNextLTPro-Medium.otf in Resources */,
 				6D85D2AF27C3A07100220F5D /* Linotype - DINNextLTPro-Heavy.otf in Resources */,
 				012C3072226FD13B00BADEF9 /* LaunchScreen.storyboard in Resources */,

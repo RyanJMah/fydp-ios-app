@@ -22,7 +22,7 @@ class GuidingLite_OrientationSensor: NSObject, CLLocationManagerDelegate {
         
         if ( CLLocationManager.headingAvailable() )
         {
-            locationManager.headingFilter = 1.0
+            locationManager.headingFilter = 3.0
         }
         else
         {
@@ -32,7 +32,7 @@ class GuidingLite_OrientationSensor: NSObject, CLLocationManagerDelegate {
     
     func get_orientation() -> CLLocationDirection?
     {
-        return locationManager.heading?.magneticHeading
+        return locationManager.heading?.trueHeading
     }
     
     // MARK: - CLLocationManagerDelegate
