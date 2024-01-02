@@ -1041,19 +1041,42 @@ extension AccessoryDemoViewController: NISessionDelegate {
         guard let accessory = object else { return}
     
         switch convergence.status {
-        case .converged:
-            print("Horizontal Angle: \(accessory.horizontalAngle)")
-            print("verticalDirectionEstimate: \(accessory.verticalDirectionEstimate)")
-            infoLabelUpdate(with: "Converged")
-            isConverged = true
-        case .notConverged([NIAlgorithmConvergenceStatus.Reason.insufficientLighting]):
-            infoLabelUpdate(with: "More light required")
-            isConverged = false
-        default:
-            infoLabelUpdate(with: "Try moving in a different direction...")
+            case .converged:
+                print("Horizontal Angle: \(accessory.horizontalAngle)")
+                print("verticalDirectionEstimate: \(accessory.verticalDirectionEstimate)")
+                infoLabelUpdate(with: "Converged")
+                isConverged = true
+
+            case .notConverged(let reasons):
+                for reason in reasons
+                {
+                    infoLabelUpdate(with: "Convergence Failure: \(reason)")
+                    print("Convergence Failure: \(reason)")
+                }
+                isConverged = false
+                print("OWIEJFOIWJFW")
+
+            default:
+                print("Did not converge: \(convergence.status)")
+                infoLabelUpdate(with: "Try moving in a different direction...")
         }
+
+        // switch convergence.status {
+        // case .converged:
+        //     print("Horizontal Angle: \(accessory.horizontalAngle)")
+        //     print("verticalDirectionEstimate: \(accessory.verticalDirectionEstimate)")
+        //     infoLabelUpdate(with: "Converged")
+        //     isConverged = true
+        // case .notConverged([NIAlgorithmConvergenceStatus.Reason.insufficientLighting]):
+        //     infoLabelUpdate(with: "More light required")
+        //     isConverged = false
+        // default:
+        //     print("Did not converge: \(convergence.status)")
+        //     infoLabelUpdate(with: "Try moving in a different direction...")
+        // }
         
     }
+
     func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
         guard let accessory = nearbyObjects.first else { return }
         guard let distance  = accessory.distance else { return }
