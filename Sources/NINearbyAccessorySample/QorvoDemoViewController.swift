@@ -184,6 +184,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     let devNotConnected = "NO ACCESSORY CONNECTED"
     let scene = SCNScene(named: "3d_arrow.usdz")
     
+    var userGivenIP: String = "000.000.000.000"
     var first_time_mqtt_init = true
     var mqtt_client: MQTTClient = MQTTClient()
     var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
@@ -492,17 +493,42 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
     }
     
+    // Function to show the pop-up for entering the IP address
+   func showIPAddressInputDialog() {
+       self.first_time_mqtt_init = false
+
+       let alertController = UIAlertController(title: "Enter IP Address", message: nil, preferredStyle: .alert)
+       
+       alertController.addTextField { (textField) in
+           textField.placeholder = "IP Address"
+       }
+       
+       let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+       let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] (_) in
+           if let ipAddress = alertController.textFields?.first?.text {
+               // Unwrap self
+               guard let strongSelf = self else {
+                   return
+               }
+
+               strongSelf.mqtt_client.initialize(ipAddress)
+               strongSelf.mqtt_client.set_handler(strongSelf.mqtt_handler)
+               strongSelf.mqtt_client.connect()
+           }
+       }
+       
+       alertController.addAction(cancelAction)
+       alertController.addAction(okAction)
+       
+       present(alertController, animated: true, completion: nil)
+   }
+    
     @objc func timerHandler() {
         // ---------------------------------------------------------
         // MQTT SHIT
         if ( self.first_time_mqtt_init )
         {
-            self.mqtt_client.initialize()
-
-            self.mqtt_client.set_handler(self.mqtt_handler)
-            self.mqtt_client.connect()
-            
-            self.first_time_mqtt_init = false
+            showIPAddressInputDialog()
         }
         // ---------------------------------------------------------
         
