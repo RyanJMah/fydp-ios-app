@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0YM-Cb-p0L">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0YM-Cb-p0L">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -23,7 +23,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="AccessoryDemoViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ifk-w0-Waf" userLabel="Header">
@@ -64,6 +64,20 @@
                                             <action selector="SwitchAR:" destination="BYZ-38-t0r" eventType="touchUpInside" id="s8i-Sz-MIe"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dgo-t0-oDd">
+                                        <rect key="frame" x="141" y="34" width="132" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="GuidingLiteScreen">
+                                            <backgroundConfiguration key="background">
+                                                <color key="backgroundColor" systemColor="systemCyanColor"/>
+                                            </backgroundConfiguration>
+                                            <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <segue destination="iYg-gi-0RG" kind="show" id="NGm-eB-1sj"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -77,7 +91,7 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rBn-rm-59Z">
-                                <rect key="frame" x="0.0" y="118" width="414" height="744"/>
+                                <rect key="frame" x="0.0" y="118" width="414" height="768"/>
                                 <subviews>
                                     <arView hidden="YES" autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rRt-fr-tO8" userLabel="AR">
                                         <rect key="frame" x="0.0" y="-300" width="414" height="300"/>
@@ -321,7 +335,7 @@
                                         </constraints>
                                     </view>
                                     <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdZ-Ee-6np" userLabel="Accessories">
-                                        <rect key="frame" x="0.0" y="483" width="414" height="261"/>
+                                        <rect key="frame" x="0.0" y="483" width="414" height="285"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -493,6 +507,7 @@
                         <outlet property="deviceView" destination="K2x-rx-mff" id="Vls-uK-CoY"/>
                         <outlet property="distanceLabel" destination="ob4-Pd-W0a" id="IkS-7Z-QCR"/>
                         <outlet property="elevationLabel" destination="kZf-fP-8qm" id="bPR-Hf-nMZ"/>
+                        <outlet property="guidingLiteScreenButton" destination="Dgo-t0-oDd" id="wAK-LA-ZLy"/>
                         <outlet property="infoLabel" destination="uOG-wM-f9e" id="D72-DH-ve6"/>
                         <outlet property="locationView" destination="cTK-4Z-trC" id="6fr-Vz-klW"/>
                         <outlet property="scanning" destination="GeM-JS-x8d" id="98G-Us-YMe"/>
@@ -509,7 +524,7 @@
             <objects>
                 <viewController id="a4S-cE-Lb9" userLabel="Settings View Controller" customClass="SettingsViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xAz-bH-XTy">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ILO-5P-MT6" userLabel="Header">
@@ -561,7 +576,7 @@
                                 <rect key="frame" x="24" y="257" width="366" height="0.0"/>
                                 <subviews>
                                     <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zpg-5C-5ko" userLabel="Accessory">
-                                        <rect key="frame" x="0.0" y="0.0" width="101.5" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="98" height="0.0"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="N/A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1H7-Is-8ES" userLabel="Device">
                                                 <rect key="frame" x="0.0" y="0.0" width="29" height="0.0"/>
@@ -570,7 +585,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unknown" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRR-d0-bDg" userLabel="Status">
-                                                <rect key="frame" x="29" y="0.0" width="72.5" height="0.0"/>
+                                                <rect key="frame" x="29" y="0.0" width="69" height="0.0"/>
                                                 <fontDescription key="fontDescription" name="DINNextLTPro-Regular" family="DIN Next LT Pro" pointSize="17"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -726,8 +741,62 @@
             </objects>
             <point key="canvasLocation" x="718.84057971014499" y="-376.33928571428572"/>
         </scene>
+        <!--Guiding Lite View Controller-->
+        <scene sceneID="6ax-sD-Abr">
+            <objects>
+                <viewController id="iYg-gi-0RG" customClass="GuidingLiteViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="A0e-4d-x8p">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Npq-GY-aYg">
+                                <rect key="frame" x="0.0" y="0.0" width="426" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" image="GuidingLite Logo" translatesAutoresizingMaskIntoConstraints="NO" id="SlU-Yl-nGV">
+                                        <rect key="frame" x="-12" y="65" width="240" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FPo-Yu-Dkw">
+                                        <rect key="frame" x="342" y="74" width="48" height="38"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="three_dots" title=""/>
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="show" id="d1r-AZ-Uc8"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1x3-Lp-44v">
+                                <rect key="frame" x="10" y="-1298" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="SoG-OI-qOi">
+                                <rect key="frame" x="5" y="242" width="404" height="468"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="2vx-x6-b8H"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="S2e-5h-5Fo"/>
+                    <connections>
+                        <outlet property="guidingLiteSettingsButton" destination="FPo-Yu-Dkw" id="qEl-Hd-2BX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hUy-jC-5iv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1647.826086956522" y="-1041.2946428571429"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="d1r-AZ-Uc8"/>
+    </inferredMetricsTieBreakers>
     <resources>
+        <image name="GuidingLite Logo" width="560" height="151"/>
         <image name="Qorvo_logo" width="86" height="21"/>
         <image name="arrow_small" width="24" height="24"/>
         <image name="azimuth_icon" width="18" height="18"/>
@@ -735,6 +804,7 @@
         <image name="bar" width="370" height="1"/>
         <image name="cube.transparent" catalog="system" width="128" height="123"/>
         <image name="distance_icon" width="18" height="18"/>
+        <image name="e7_2nd_floor_reduced" width="1244" height="1308"/>
         <image name="elevation_icon" width="14" height="18"/>
         <image name="spinner" width="44" height="44"/>
         <image name="subheading" width="2" height="14"/>
@@ -745,6 +815,9 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemCyanColor">
+            <color red="0.19607843137254902" green="0.67843137254901964" blue="0.90196078431372551" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

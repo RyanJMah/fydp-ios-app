@@ -119,6 +119,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @IBOutlet weak var distanceLabel:  UILabel!
     @IBOutlet weak var turnLabel:      UILabel!
     
+    @IBOutlet weak var guidingLiteScreenButton: UIButton!
     @IBOutlet weak var azimuthLabel:   UILabel!
     @IBOutlet weak var elevationLabel: UILabel!
     
