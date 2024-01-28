@@ -22,8 +22,8 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="AccessoryDemoViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ifk-w0-Waf" userLabel="Header">
@@ -90,8 +90,8 @@
                                     <constraint firstItem="E2X-TM-Tg4" firstAttribute="top" secondItem="Ifk-w0-Waf" secondAttribute="top" constant="67" id="oAO-zg-7g7"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rBn-rm-59Z">
-                                <rect key="frame" x="0.0" y="118" width="414" height="768"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rBn-rm-59Z">
+                                <rect key="frame" x="0.0" y="118" width="414" height="695"/>
                                 <subviews>
                                     <arView hidden="YES" autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rRt-fr-tO8" userLabel="AR">
                                         <rect key="frame" x="0.0" y="-300" width="414" height="300"/>
@@ -334,8 +334,8 @@
                                             <constraint firstItem="j2M-hC-MdH" firstAttribute="centerY" secondItem="wCk-5D-CDm" secondAttribute="centerY" id="nAm-8h-i6A"/>
                                         </constraints>
                                     </view>
-                                    <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdZ-Ee-6np" userLabel="Accessories">
-                                        <rect key="frame" x="0.0" y="483" width="414" height="285"/>
+                                    <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdZ-Ee-6np" userLabel="Accessories">
+                                        <rect key="frame" x="0.0" y="483" width="414" height="212"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -524,7 +524,7 @@
             <objects>
                 <viewController id="a4S-cE-Lb9" userLabel="Settings View Controller" customClass="SettingsViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xAz-bH-XTy">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ILO-5P-MT6" userLabel="Header">
@@ -746,7 +746,7 @@
             <objects>
                 <viewController id="iYg-gi-0RG" customClass="GuidingLiteViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="A0e-4d-x8p">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Npq-GY-aYg">
@@ -773,18 +773,80 @@
                                 <rect key="frame" x="10" y="-1298" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="SoG-OI-qOi">
-                                <rect key="frame" x="5" y="242" width="404" height="468"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="5RV-Ki-pcj">
+                                <rect key="frame" x="10" y="357" width="374" height="428"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="locationPin" translatesAutoresizingMaskIntoConstraints="NO" id="ZiA-Yv-V7Q">
+                                <rect key="frame" x="189" y="464" width="36" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arrow_small" translatesAutoresizingMaskIntoConstraints="NO" id="2Na-un-mO8">
+                                <rect key="frame" x="195" y="585" width="25" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <view alpha="0.40000000000000002" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uyj-kT-RMS">
+                                <rect key="frame" x="0.0" y="126" width="416" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zwC-19-Bun">
+                                        <rect key="frame" x="129" y="5" width="158.5" height="34.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Set Destination">
+                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="15"/>
+                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="setButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="j0a-3p-waU"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DS9-B0-rSD">
+                                        <rect key="frame" x="8" y="5" width="85" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Cancel">
+                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="10"/>
+                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="cancelButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="lgL-hQ-rQ1"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DJJ-Lm-xQ8">
+                                        <rect key="frame" x="309" y="4" width="76" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Go">
+                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="17"/>
+                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="goButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="9DL-cf-TW7"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="scrollViewTexturedBackgroundColor"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" sceneName="3d_arrow.usdz" translatesAutoresizingMaskIntoConstraints="NO" id="W2E-5l-AQ4">
+                                <rect key="frame" x="88" y="201" width="240" height="148"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </sceneKitView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2vx-x6-b8H"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem id="M6J-gY-gy5"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="S2e-5h-5Fo"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="arrowImgView" destination="W2E-5l-AQ4" id="25w-hg-VW2"/>
+                        <outlet property="cancelDestButton" destination="DS9-B0-rSD" id="c2x-Vw-Hd6"/>
+                        <outlet property="goDestButton" destination="DJJ-Lm-xQ8" id="G4N-bx-MzF"/>
                         <outlet property="guidingLiteSettingsButton" destination="FPo-Yu-Dkw" id="qEl-Hd-2BX"/>
+                        <outlet property="locationPinImage" destination="ZiA-Yv-V7Q" id="ZRu-vV-VAm"/>
+                        <outlet property="setDestButton" destination="zwC-19-Bun" id="0VV-lZ-Uuo"/>
+                        <outlet property="userArrowImage" destination="2Na-un-mO8" id="WGv-bg-0Kg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hUy-jC-5iv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -806,12 +868,16 @@
         <image name="distance_icon" width="18" height="18"/>
         <image name="e7_2nd_floor_reduced" width="1244" height="1308"/>
         <image name="elevation_icon" width="14" height="18"/>
+        <image name="locationPin" width="512" height="512"/>
         <image name="spinner" width="44" height="44"/>
         <image name="subheading" width="2" height="14"/>
         <image name="switch_on" width="56" height="48"/>
         <image name="three_dots" width="24" height="24"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="scrollViewTexturedBackgroundColor">
+            <color red="0.43529411764705883" green="0.44313725490196076" blue="0.47450980392156861" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

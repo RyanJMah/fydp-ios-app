@@ -498,7 +498,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = J4Z8H37GZ3;
 				INFOPLIST_FILE = NINearbyAccessorySample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Qorvo Nearby Interaction";
+				INFOPLIST_KEY_CFBundleDisplayName = GuidingLite;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -526,7 +526,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = J4Z8H37GZ3;
 				INFOPLIST_FILE = NINearbyAccessorySample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Qorvo Nearby Interaction";
+				INFOPLIST_KEY_CFBundleDisplayName = GuidingLite;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
