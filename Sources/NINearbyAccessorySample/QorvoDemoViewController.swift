@@ -920,7 +920,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
             scanning.stopAnimating()
         }
         else {
-            scanning.startAnimating()
+            scanning.startAnimating() 
         }
     }
     
