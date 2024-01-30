@@ -826,10 +826,10 @@
                                 <color key="backgroundColor" systemColor="scrollViewTexturedBackgroundColor"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" sceneName="3d_arrow.usdz" translatesAutoresizingMaskIntoConstraints="NO" id="W2E-5l-AQ4">
-                                <rect key="frame" x="88" y="201" width="240" height="148"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Arrow" translatesAutoresizingMaskIntoConstraints="NO" id="bNr-z7-dIu">
+                                <rect key="frame" x="87" y="199" width="235" height="150"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </sceneKitView>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2vx-x6-b8H"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -840,8 +840,8 @@
                     <navigationItem key="navigationItem" id="S2e-5h-5Fo"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="arrowImgView" destination="W2E-5l-AQ4" id="25w-hg-VW2"/>
                         <outlet property="cancelDestButton" destination="DS9-B0-rSD" id="c2x-Vw-Hd6"/>
+                        <outlet property="directionArrowImage" destination="bNr-z7-dIu" id="4ZG-1O-yJt"/>
                         <outlet property="goDestButton" destination="DJJ-Lm-xQ8" id="G4N-bx-MzF"/>
                         <outlet property="guidingLiteSettingsButton" destination="FPo-Yu-Dkw" id="qEl-Hd-2BX"/>
                         <outlet property="locationPinImage" destination="ZiA-Yv-V7Q" id="ZRu-vV-VAm"/>
@@ -858,6 +858,7 @@
         <segue reference="d1r-AZ-Uc8"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <image name="Arrow" width="512" height="512"/>
         <image name="GuidingLite Logo" width="560" height="151"/>
         <image name="Qorvo_logo" width="86" height="21"/>
         <image name="arrow_small" width="24" height="24"/>

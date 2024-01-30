@@ -59,26 +59,26 @@ import os.log
 import CocoaMQTT
 import Foundation
 
-func decodeJSONString(_ jsonString: String) -> [String: Any]? {
-    // Step 1: Convert the JSON string to Data
-    guard let jsonData = jsonString.data(using: .utf8) else {
-        print("Failed to convert JSON string to Data.")
-        return nil
-    }
-    
-    // Step 2: Use JSONSerialization to parse Data into a dictionary
-    do {
-        if let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
-            return jsonObject
-        } else {
-            print("Failed to convert JSON data to a dictionary.")
-            return nil
-        }
-    } catch {
-        print("Error parsing JSON: \(error)")
-        return nil
-    }
-}
+//func decodeJSONString(_ jsonString: String) -> [String: Any]? {
+//    // Step 1: Convert the JSON string to Data
+//    guard let jsonData = jsonString.data(using: .utf8) else {
+//        print("Failed to convert JSON string to Data.")
+//        return nil
+//    }
+//    
+//    // Step 2: Use JSONSerialization to parse Data into a dictionary
+//    do {
+//        if let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
+//            return jsonObject
+//        } else {
+//            print("Failed to convert JSON data to a dictionary.")
+//            return nil
+//        }
+//    } catch {
+//        print("Error parsing JSON: \(error)")
+//        return nil
+//    }
+//}
 
 // An example messaging protocol for communications between the app and the
 // accessory. In your app, modify or extend this enumeration to your app's
@@ -238,12 +238,12 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         // Initialises the Timer used for Haptic and Sound feedbacks
         _ = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
         
-        // GuidingLite: heartbeat timer
-        _ = Timer.scheduledTimer( timeInterval: 10,
-                                  target: self,
-                                  selector: #selector(self.send_mqtt_heartbeat),
-                                  userInfo: nil,
-                                  repeats: true )
+//        // GuidingLite: heartbeat timer
+//        _ = Timer.scheduledTimer( timeInterval: 10,
+//                                  target: self,
+//                                  selector: #selector(self.send_mqtt_heartbeat),
+//                                  userInfo: nil,
+//                                  repeats: true )
         
         // Initialises table to stack devices from qorvoDevices
         accessoriesTable.delegate   = self
@@ -263,13 +263,14 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         
     }
     
-    @objc func send_mqtt_heartbeat()
-    {
-        DispatchQueue.global(qos: .default).async
-        {
-            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
-        }
-    }
+//    @objc func send_mqtt_heartbeat()
+//    {
+//        DispatchQueue.global(qos: .default).async
+//        {
+//            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
+//        }
+//    }
+    
     
     @objc func send_distance_azimuth_mqtt(deviceID: Int, aID: Int)
     {

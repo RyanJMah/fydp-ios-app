@@ -11,9 +11,12 @@ import CocoaMQTT
 
 let USER_ID = 69
 
-let HEARTBEAT_TOPIC = "gl/user/\(USER_ID)/heartbeat"
-let PATHING_TOPIC   = "gl/user/\(USER_ID)/pathing"
-let DATA_TOPIC_BASE = "gl/user/\(USER_ID)/data/"
+let HEARTBEAT_TOPIC     = "gl/user/\(USER_ID)/heartbeat"
+let PATHING_TOPIC       = "gl/user/\(USER_ID)/pathing"
+let DATA_TOPIC_BASE     = "gl/user/\(USER_ID)/data/"
+let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
+let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
+let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
 
 
 struct TelemetryData {
@@ -67,12 +70,19 @@ class MQTTClient {
 }
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
-    var direction = ""
+    var direction       = ""
+    var userPosition    = CGPoint(x: 0, y: 0)
+    var arrowAngle      = Float(0.0)
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
         mqtt.subscribe("gl/user/\(USER_ID)/pathing")
+        mqtt.subscribe(HEARTBEAT_TOPIC)
+        mqtt.subscribe(USER_COORD_TOPIC)
+        mqtt.subscribe(DEST_COORD_TOPIC)
+        mqtt.subscribe(ARROW_ANGLE_TOPIC)
+
     }
     
     ///
@@ -91,6 +101,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
         let subtopics = message.topic.components(separatedBy: "/")
+        print("msg: \(message.topic)")
         
         if (subtopics[3] == "pathing")
         {
@@ -100,6 +111,38 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
             {
                 direction = decodedDictionary["direction"] as! String
                 print("Direction: \(decodedDictionary["direction"]!)")
+            }
+            else
+            {
+//                print("Failed to decode JSON string.")
+            }
+        }
+        
+        if (message.topic == USER_COORD_TOPIC)
+        {
+            let jsonString = message.string
+            
+            if let decodedDictionary = decodeJSONString(jsonString!)
+            {
+                userPosition.x = decodedDictionary["x"] as! CGFloat
+                print("user_x: \(decodedDictionary["x"]!)")
+                userPosition.y = decodedDictionary["y"] as! CGFloat
+                print("user_y: \(decodedDictionary["y"]!)")
+            }
+            else
+            {
+//                print("Failed to decode JSON string.")
+            }
+        }
+        
+        if (message.topic == ARROW_ANGLE_TOPIC)
+        {
+            let jsonString = message.string
+            
+            if let decodedDictionary = decodeJSONString(jsonString!)
+            {
+                arrowAngle = decodedDictionary["angle"] as! Float
+                print("arrow_angle: \(decodedDictionary["angle"]!)")
             }
             else
             {
