@@ -51,13 +51,21 @@
 
 import UIKit
 import NearbyInteraction
+import CoreHaptics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var supportsHaptics: Bool = false
+    
+    /// - Tag: CheckHapticCompatibility
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // Check if the device supports haptics.
+        let hapticCapability = CHHapticEngine.capabilitiesForHardware()
+        supportsHaptics = hapticCapability.supportsHaptics
+        
         return true
     }
     
