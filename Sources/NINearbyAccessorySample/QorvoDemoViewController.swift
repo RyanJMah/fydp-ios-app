@@ -192,8 +192,10 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     private var engine: CHHapticEngine!
     private var engineNeedsStart = true
     private var continuousPlayer: CHHapticAdvancedPatternPlayer!
-    private let initialIntensity: Float = 1.0
-    private let initialSharpness: Float = 0.5
+
+    // DELETE LATER
+    private var haptics_intensity: Int = 100
+    private var haptics_direction: Int = 0
     
     private lazy var supportsHaptics: Bool = {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -244,17 +246,29 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         for i in 0...24 {
             imageScanningSmall.append(imageSmall.rotate(radians: Float(i) * .pi / 12)!)
         }
-        
+
         // Initialises the Timer used for Haptic and Sound feedbacks
-        _ = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
-        
+        _ = Timer.scheduledTimer( timeInterval: 0.2,
+                                  target: self,
+                                  selector: #selector(viewControllerTimer),
+                                  userInfo: nil,
+                                  repeats: true )
+
         // GuidingLite: heartbeat timer
         _ = Timer.scheduledTimer( timeInterval: 10,
                                   target: self,
-                                  selector: #selector(self.send_mqtt_heartbeat),
+                                  selector: #selector(self.mqtt_heartbeat_timer),
                                   userInfo: nil,
                                   repeats: true )
-        
+
+        // GuidingLite: haptics timer
+        _ = Timer.scheduledTimer( timeInterval: 0.05,
+                                  target: self,
+                                  selector: #selector(self.haptics_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+
+
         // Initialises table to stack devices from qorvoDevices
         accessoriesTable.delegate   = self
         accessoriesTable.dataSource = self
@@ -275,15 +289,45 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
             createAndStartHapticEngine()
             createContinuousHapticPlayer()
         }
-        continuousPalettePressed()
+        // continuousPalettePressed()
+
+        self.playHaptics(intensity: 1.0, sharpness: 0.0)
+        // self.playHaptics(intensity: 1.0, sharpness: 0.0)
     }
     
-    @objc func send_mqtt_heartbeat()
+    @objc func mqtt_heartbeat_timer()
     {
         DispatchQueue.global(qos: .default).async
         {
             self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
         }
+    }
+
+    @objc func haptics_timer()
+    {
+        print("haptics_direction: \(self.haptics_direction) haptics_intensity: \(self.haptics_intensity)")
+
+        if (self.haptics_direction == 0)
+        {
+            self.haptics_intensity += 2
+
+            if (self.haptics_intensity > 100)
+            {
+                self.haptics_direction = 1
+            }
+        }
+        else
+        {
+            self.haptics_intensity -= 2
+
+            if (self.haptics_intensity < 0)
+            {
+                self.haptics_direction = 0
+            }
+        }
+
+        self.playHaptics(intensity: Float(self.haptics_intensity) / 100.0, sharpness: 0.5)
+        // self.playHaptics(intensity: 1.0, sharpness: 0.5)
     }
     
     @objc func send_distance_azimuth_mqtt(deviceID: Int, aID: Int)
@@ -539,7 +583,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
        present(alertController, animated: true, completion: nil)
    }
     
-    @objc func timerHandler() {
+    @objc func viewControllerTimer() {
         // ---------------------------------------------------------
         // MQTT SHIT
         if ( self.first_time_mqtt_init )
@@ -1093,11 +1137,11 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     func createContinuousHapticPlayer() {
         // Create an intensity parameter:
         let intensity = CHHapticEventParameter(parameterID: .hapticIntensity,
-                                               value: initialIntensity)
+                                               value: 0.5 )
         
         // Create a sharpness parameter:
-        let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness,
-                                               value: initialSharpness)
+        let sharpness = CHHapticEventParameter( parameterID: .hapticSharpness,
+                                                value: 0.0 )
         
         // Create a continuous event with a long duration from the parameters.
         let continuousEvent = CHHapticEvent(eventType: .hapticContinuous,
@@ -1118,6 +1162,49 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         
         continuousPlayer.completionHandler = { _ in
         }
+    }
+
+    func playHaptics(intensity: Float, sharpness: Float = 0.0)
+    {
+        // The intensity should be highest at the top, opposite of the iOS y-axis direction, so subtract.
+        // Dynamic parameters range from -0.5 to 0.5 to map the final sharpness to the [0,1] range.
+        
+        if supportsHaptics
+        {
+            // Create dynamic parameters for the updated intensity & sharpness.
+            let intensityParameter = CHHapticDynamicParameter(parameterID: .hapticIntensityControl,
+                                                              value: intensity,
+                                                              relativeTime: 0)
+            
+            let sharpnessParameter = CHHapticDynamicParameter(parameterID: .hapticSharpnessControl,
+                                                              value: sharpness,
+                                                              relativeTime: 0)
+            
+            // Send dynamic parameters to the haptic player.
+            do
+            {
+                try self.continuousPlayer.sendParameters([intensityParameter, sharpnessParameter], atTime: 0)
+            }
+            catch let error {
+                print("Dynamic Parameter Error: \(error)")
+            }
+        }
+
+        // Proceed if and only if the device supports haptics.
+        if supportsHaptics
+        {
+            // Warm engine.
+            do
+            {
+                // Begin playing continuous pattern.
+                try continuousPlayer.start(atTime: CHHapticTimeImmediate)
+            }
+            catch let error
+            {
+                print("Error starting the continuous haptic player: \(error)")
+            }
+        }
+            
     }
     
     private func continuousPalettePressed() {
