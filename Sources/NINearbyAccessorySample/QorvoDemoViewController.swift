@@ -262,7 +262,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
                                   repeats: true )
 
         // GuidingLite: haptics timer
-        _ = Timer.scheduledTimer( timeInterval: 0.05,
+        _ = Timer.scheduledTimer( timeInterval: 0.02,
                                   target: self,
                                   selector: #selector(self.haptics_timer),
                                   userInfo: nil,
@@ -291,7 +291,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
         // continuousPalettePressed()
 
-        self.playHaptics(intensity: 1.0, sharpness: 0.0)
+//        self.playHaptics(intensity: 1.0, sharpness: 0.0)
         // self.playHaptics(intensity: 1.0, sharpness: 0.0)
     }
     
@@ -305,28 +305,37 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
 
     @objc func haptics_timer()
     {
-        print("haptics_direction: \(self.haptics_direction) haptics_intensity: \(self.haptics_intensity)")
+        // print("haptics_direction: \(self.haptics_direction) haptics_intensity: \(self.haptics_intensity)")
 
         if (self.haptics_direction == 0)
         {
-            self.haptics_intensity += 2
+            self.haptics_intensity += 1
 
-            if (self.haptics_intensity > 100)
+            if (self.haptics_intensity >= 100)
             {
                 self.haptics_direction = 1
             }
         }
         else
         {
-            self.haptics_intensity -= 2
+            self.haptics_intensity -= 1
 
-            if (self.haptics_intensity < 0)
+            if (self.haptics_intensity <= 0)
             {
                 self.haptics_direction = 0
             }
         }
 
-        self.playHaptics(intensity: Float(self.haptics_intensity) / 100.0, sharpness: 0.5)
+        /*
+         * FIXME:
+         *      - The max duration of a continuous haptics event is 30 seconds,
+         *        I guess Apple doesn't want us to use it for too long.
+         *
+         *        We can probably emulate a long haptics event by chaining
+         *        many transient haptics events.
+         */
+        
+        self.playHaptics(intensity: self.haptics_intensity, sharpness: 75)
         // self.playHaptics(intensity: 1.0, sharpness: 0.5)
     }
     
@@ -1164,7 +1173,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
     }
 
-    func playHaptics(intensity: Float, sharpness: Float = 0.0)
+    func playHaptics(intensity: Int, sharpness: Float = 100)
     {
         // The intensity should be highest at the top, opposite of the iOS y-axis direction, so subtract.
         // Dynamic parameters range from -0.5 to 0.5 to map the final sharpness to the [0,1] range.
@@ -1173,11 +1182,11 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         {
             // Create dynamic parameters for the updated intensity & sharpness.
             let intensityParameter = CHHapticDynamicParameter(parameterID: .hapticIntensityControl,
-                                                              value: intensity,
+                                                              value: Float(intensity) / 100.0,
                                                               relativeTime: 0)
             
             let sharpnessParameter = CHHapticDynamicParameter(parameterID: .hapticSharpnessControl,
-                                                              value: sharpness,
+                                                              value: Float(sharpness) / 100.0,
                                                               relativeTime: 0)
             
             // Send dynamic parameters to the haptic player.
