@@ -17,6 +17,8 @@ import os.log
 import CocoaMQTT
 import Foundation
 
+var g_uwb_manager: GuidingLite_UWBManager?
+
 func decodeJSONString(_ jsonString: String) -> [String: Any]? {
     // Step 1: Convert the JSON string to Data
     guard let jsonData = jsonString.data(using: .utf8) else {
@@ -41,7 +43,7 @@ func decodeJSONString(_ jsonString: String) -> [String: Any]? {
 class DebugViewController: UIViewController
 {
     var timer: Timer?
-    var gl_view: GuidingLiteViewController?
+    var uwb_manager: GuidingLite_UWBManager?
     
     @IBOutlet weak var anchor0StatusLabel: UILabel!
     @IBOutlet weak var anchor1StatusLabel: UILabel!
@@ -60,43 +62,52 @@ class DebugViewController: UIViewController
     @IBOutlet weak var anchor2DistLabel: UILabel!
     @IBOutlet weak var anchor3DistLabel: UILabel!
     
-    func startTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
-   }
-
-   @objc func updateLabels() {
-       let anchor0_data = gl_view?.uwb_manager?.anchor_data[0]
-       let anchor1_data = gl_view?.uwb_manager?.anchor_data[1]
-       let anchor2_data = gl_view?.uwb_manager?.anchor_data[2]
-       let anchor3_data = gl_view?.uwb_manager?.anchor_data[3]
-       
-       let anchor0_status = gl_view?.uwb_manager?.anchor_connection_status[0]
-       let anchor1_status = gl_view?.uwb_manager?.anchor_connection_status[1]
-       let anchor2_status = gl_view?.uwb_manager?.anchor_connection_status[2]
-       let anchor3_status = gl_view?.uwb_manager?.anchor_connection_status[3]
-       
-       anchor0StatusLabel.text = anchor0_status ?? false ? "True" : "False"
-       anchor1StatusLabel.text = anchor1_status ?? false ? "True" : "False"
-       anchor2StatusLabel.text = anchor2_status ?? false ? "True" : "False"
-       anchor3StatusLabel.text = anchor3_status ?? false ? "True" : "False"
-       
-       anchor0AngleLabel.text = String(anchor0_data?.azimuth_deg ?? 0)
-       anchor1AngleLabel.text = String(anchor1_data?.azimuth_deg ?? 0)
-       anchor2AngleLabel.text = String(anchor2_data?.azimuth_deg ?? 0)
-       anchor3AngleLabel.text = String(anchor3_data?.azimuth_deg ?? 0)
-        
-       anchor0DistLabel.text = String(anchor0_data?.distance_m ?? 0.0)
-       anchor1DistLabel.text = String(anchor1_data?.distance_m ?? 0.0)
-       anchor2DistLabel.text = String(anchor2_data?.distance_m ?? 0.0)
-       anchor3DistLabel.text = String(anchor3_data?.distance_m ?? 0.0)
-       
-   }
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
+        self.uwb_manager = g_uwb_manager
+
         startTimer()
+    }
+
+    func startTimer()
+    {
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
+    }
+
+    func round(_ value: Float, _ places: Int) -> Double
+    {
+        let divisor = pow(10.0, Double(places))
+        return (Double(value) * divisor).rounded() / divisor
+    }
+
+    @objc func updateLabels()
+    {
+        let anchor0_data = self.uwb_manager?.anchor_data[0]
+        let anchor1_data = self.uwb_manager?.anchor_data[1]
+        let anchor2_data = self.uwb_manager?.anchor_data[2]
+        let anchor3_data = self.uwb_manager?.anchor_data[3]
+        
+        let anchor0_status = self.uwb_manager?.anchor_connection_status[0]
+        let anchor1_status = self.uwb_manager?.anchor_connection_status[1]
+        let anchor2_status = self.uwb_manager?.anchor_connection_status[2]
+        let anchor3_status = self.uwb_manager?.anchor_connection_status[3]
+        
+        anchor0StatusLabel.text = anchor0_status ?? false ? "Connected" : "Not Connected"
+        anchor1StatusLabel.text = anchor1_status ?? false ? "Connected" : "Not Connected"
+        anchor2StatusLabel.text = anchor2_status ?? false ? "Connected" : "Not Connected"
+        anchor3StatusLabel.text = anchor3_status ?? false ? "Connected" : "Not Connected"
+
+        anchor0AngleLabel.text = String(anchor0_data?.azimuth_deg ?? 0)
+        anchor1AngleLabel.text = String(anchor1_data?.azimuth_deg ?? 0)
+        anchor2AngleLabel.text = String(anchor2_data?.azimuth_deg ?? 0)
+        anchor3AngleLabel.text = String(anchor3_data?.azimuth_deg ?? 0)
+         
+        anchor0DistLabel.text = String( self.round(anchor0_data?.distance_m ?? 0.0, 4) )
+        anchor1DistLabel.text = String( self.round(anchor1_data?.distance_m ?? 0.0, 4) )
+        anchor2DistLabel.text = String( self.round(anchor2_data?.distance_m ?? 0.0, 4) )
+        anchor3DistLabel.text = String( self.round(anchor3_data?.distance_m ?? 0.0, 4) )
     }
 }
 
@@ -182,7 +193,9 @@ class GuidingLiteViewController: UIViewController
         // self.mqtt_client.set_handler(self.mqtt_handler)
         // self.mqtt_client.connect()
 
-        self.uwb_manager    = GuidingLite_UWBManager(arView: self.arView)
+        g_uwb_manager = GuidingLite_UWBManager(arView: self.arView)
+
+        self.uwb_manager    = g_uwb_manager
         self.heading_sensor = GuidingLite_HeadingSensor()
     }
 
