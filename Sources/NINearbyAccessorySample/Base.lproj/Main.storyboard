@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0YM-Cb-p0L">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="iYg-gi-0RG">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -22,7 +22,7 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="AccessoryDemoViewController" customModule="Qorvo_NI_AR" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="8bC-Xf-vdC">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -90,7 +90,7 @@
                                     <constraint firstItem="E2X-TM-Tg4" firstAttribute="top" secondItem="Ifk-w0-Waf" secondAttribute="top" constant="67" id="oAO-zg-7g7"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rBn-rm-59Z">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="rBn-rm-59Z">
                                 <rect key="frame" x="0.0" y="118" width="414" height="695"/>
                                 <subviews>
                                     <arView hidden="YES" autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rRt-fr-tO8" userLabel="AR">
@@ -103,7 +103,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="106"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selected Accessory" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hhC-s4-E49" userLabel="Selected Accessory">
-                                                <rect key="frame" x="148.5" y="40" width="117.5" height="15"/>
+                                                <rect key="frame" x="145" y="40" width="124.5" height="15"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="15" id="E20-KN-Ru4"/>
                                                 </constraints>
@@ -144,7 +144,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ob4-Pd-W0a" userLabel="distance_value">
-                                                        <rect key="frame" x="46" y="57" width="8.5" height="26"/>
+                                                        <rect key="frame" x="45.5" y="57" width="9" height="26"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="26" id="cEF-qm-4VB"/>
                                                         </constraints>
@@ -153,7 +153,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="distance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4et-xO-JK2" userLabel="distance_title">
-                                                        <rect key="frame" x="24.5" y="83" width="51" height="14"/>
+                                                        <rect key="frame" x="23.5" y="83" width="53.5" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="8Nw-sr-UH0"/>
                                                         </constraints>
@@ -185,7 +185,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d3y-Kl-sAY" userLabel="azimuth_value">
-                                                        <rect key="frame" x="46" y="57" width="8.5" height="26"/>
+                                                        <rect key="frame" x="45.5" y="57" width="9" height="26"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="26" id="s0B-pb-HSk"/>
                                                         </constraints>
@@ -194,7 +194,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="azimuth" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u1N-Gi-9Qw" userLabel="azimuth_title">
-                                                        <rect key="frame" x="25.5" y="83" width="49" height="14"/>
+                                                        <rect key="frame" x="25.5" y="83" width="49.5" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="X0t-z1-2r8"/>
                                                         </constraints>
@@ -226,7 +226,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kZf-fP-8qm" userLabel="elevation_value">
-                                                        <rect key="frame" x="46" y="57" width="8.5" height="26"/>
+                                                        <rect key="frame" x="45.5" y="57" width="9" height="26"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="26" id="8jf-EM-zx4"/>
                                                         </constraints>
@@ -235,7 +235,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="elevation" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5VQ-Nt-67f" userLabel="elevation_title">
-                                                        <rect key="frame" x="22.5" y="83" width="55" height="14"/>
+                                                        <rect key="frame" x="22" y="83" width="56" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="fqY-Fb-4W8"/>
                                                         </constraints>
@@ -314,7 +314,7 @@
                                         <rect key="frame" x="0.0" y="431" width="414" height="52"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Devices near you" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j2M-hC-MdH" userLabel="device_title">
-                                                <rect key="frame" x="22" y="19" width="104" height="14"/>
+                                                <rect key="frame" x="22" y="18" width="108" height="16.5"/>
                                                 <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="14"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -334,7 +334,7 @@
                                             <constraint firstItem="j2M-hC-MdH" firstAttribute="centerY" secondItem="wCk-5D-CDm" secondAttribute="centerY" id="nAm-8h-i6A"/>
                                         </constraints>
                                     </view>
-                                    <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdZ-Ee-6np" userLabel="Accessories">
+                                    <tableView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="87" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RdZ-Ee-6np" userLabel="Accessories">
                                         <rect key="frame" x="0.0" y="483" width="414" height="212"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -576,7 +576,7 @@
                                 <rect key="frame" x="24" y="257" width="366" height="0.0"/>
                                 <subviews>
                                     <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zpg-5C-5ko" userLabel="Accessory">
-                                        <rect key="frame" x="0.0" y="0.0" width="98" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="101.5" height="0.0"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="N/A" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1H7-Is-8ES" userLabel="Device">
                                                 <rect key="frame" x="0.0" y="0.0" width="29" height="0.0"/>
@@ -585,7 +585,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unknown" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRR-d0-bDg" userLabel="Status">
-                                                <rect key="frame" x="29" y="0.0" width="69" height="0.0"/>
+                                                <rect key="frame" x="29" y="0.0" width="72.5" height="0.0"/>
                                                 <fontDescription key="fontDescription" name="DINNextLTPro-Regular" family="DIN Next LT Pro" pointSize="17"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
