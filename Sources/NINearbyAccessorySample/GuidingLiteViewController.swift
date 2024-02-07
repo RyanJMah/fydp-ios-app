@@ -38,6 +38,68 @@ func decodeJSONString(_ jsonString: String) -> [String: Any]? {
     }
 }
 
+class DebugViewController: UIViewController
+{
+    var timer: Timer?
+    var gl_view: GuidingLiteViewController?
+    
+    @IBOutlet weak var anchor0StatusLabel: UILabel!
+    @IBOutlet weak var anchor1StatusLabel: UILabel!
+    @IBOutlet weak var anchor2StatusLabel: UILabel!
+    @IBOutlet weak var anchor3StatusLabel: UILabel!
+    
+    
+    @IBOutlet weak var anchor0AngleLabel: UILabel!
+    @IBOutlet weak var anchor1AngleLabel: UILabel!
+    @IBOutlet weak var anchor2AngleLabel: UILabel!
+    @IBOutlet weak var anchor3AngleLabel: UILabel!
+    
+    
+    @IBOutlet weak var anchor0DistLabel: UILabel!
+    @IBOutlet weak var anchor1DistLabel: UILabel!
+    @IBOutlet weak var anchor2DistLabel: UILabel!
+    @IBOutlet weak var anchor3DistLabel: UILabel!
+    
+    func startTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
+   }
+
+   @objc func updateLabels() {
+       let anchor0_data = gl_view?.uwb_manager?.anchor_data[0]
+       let anchor1_data = gl_view?.uwb_manager?.anchor_data[1]
+       let anchor2_data = gl_view?.uwb_manager?.anchor_data[2]
+       let anchor3_data = gl_view?.uwb_manager?.anchor_data[3]
+       
+       let anchor0_status = gl_view?.uwb_manager?.anchor_connection_status[0]
+       let anchor1_status = gl_view?.uwb_manager?.anchor_connection_status[1]
+       let anchor2_status = gl_view?.uwb_manager?.anchor_connection_status[2]
+       let anchor3_status = gl_view?.uwb_manager?.anchor_connection_status[3]
+       
+       anchor0StatusLabel.text = anchor0_status ?? false ? "True" : "False"
+       anchor1StatusLabel.text = anchor1_status ?? false ? "True" : "False"
+       anchor2StatusLabel.text = anchor2_status ?? false ? "True" : "False"
+       anchor3StatusLabel.text = anchor3_status ?? false ? "True" : "False"
+       
+       anchor0AngleLabel.text = String(anchor0_data?.azimuth_deg ?? 0)
+       anchor1AngleLabel.text = String(anchor1_data?.azimuth_deg ?? 0)
+       anchor2AngleLabel.text = String(anchor2_data?.azimuth_deg ?? 0)
+       anchor3AngleLabel.text = String(anchor3_data?.azimuth_deg ?? 0)
+        
+       anchor0DistLabel.text = String(anchor0_data?.distance_m ?? 0.0)
+       anchor1DistLabel.text = String(anchor1_data?.distance_m ?? 0.0)
+       anchor2DistLabel.text = String(anchor2_data?.distance_m ?? 0.0)
+       anchor3DistLabel.text = String(anchor3_data?.distance_m ?? 0.0)
+       
+   }
+    
+    override func viewDidLoad()
+    {
+        super.viewDidLoad()
+        
+        startTimer()
+    }
+}
+
 class GuidingLiteViewController: UIViewController
 {
     @IBOutlet weak var userArrowImage: UIImageView!
