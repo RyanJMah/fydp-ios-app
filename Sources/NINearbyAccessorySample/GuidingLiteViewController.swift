@@ -75,6 +75,7 @@ class GuidingLiteViewController: UIViewController
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
     var uwb_manager: GuidingLite_UWBManager?
+    var haptics_controller: GuidingLight_HapticsController?
     
     override func viewDidLoad()
     {
@@ -90,21 +91,22 @@ class GuidingLiteViewController: UIViewController
                                   repeats: true )
 
         /*
-         * Schedule MQTT initialization after 1 second, can't do it here because
-         * Apple doesn't like background sockets.
+         * Schedule the expensive initialization to run after the view has loaded,
+         * so that the UI remains responsive.
          */
         _ = Timer.scheduledTimer( timeInterval: 1,
                                   target: self,
-                                  selector: #selector(self.mqtt_init),
+                                  selector: #selector(self.expensive_initialization),
                                   userInfo: nil,
                                   repeats: false )  // Only run once
-
-        self.uwb_manager = GuidingLite_UWBManager(arView: self.arView)
     }
 
-    @objc func mqtt_init()
+    @objc func expensive_initialization()
     {
         self.showIPAddressInputDialog()
+
+        self.uwb_manager        = GuidingLite_UWBManager(arView: self.arView)
+        self.haptics_controller = GuidingLight_HapticsController()
 
         // self.mqtt_handler.connect_callback = self.mqtt_connect_callback
         // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
