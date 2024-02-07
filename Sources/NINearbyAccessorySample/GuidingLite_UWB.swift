@@ -52,6 +52,8 @@ class GuidingLite_UWBManager : NSObject
 
     var anchor_data = [Int:TelemetryData]()
 
+    var anchor_connection_status = [Int:Bool]()
+
     init(arView: ARView)
     {
         self.arView = arView
@@ -117,7 +119,10 @@ class GuidingLite_UWBManager : NSObject
                                         elevation_deg: Int16(elevation),
                                         los: isLOS )
         
-        self.anchor_data[unique_hash] = telem_data
+        self.anchor_data[aid] = telem_data
+
+        // print(aid)
+        // print(telem_data)
 
         // DispatchQueue.global(qos: .userInteractive).async
         // {
@@ -177,6 +182,8 @@ class GuidingLite_UWBManager : NSObject
     {
         print("Discovered anchor \(aid), ")
 
+        self.anchor_connection_status[aid] = false
+
         do
         {
             try self.ble.connectAnchor(aid)
@@ -190,12 +197,15 @@ class GuidingLite_UWBManager : NSObject
     func _ble_timeout_handler(aid: Int, unique_hash: Int)
     {
         print("Timeout for anchor \(aid)")
+
+        self.anchor_connection_status[aid] = false
     }
 
     func _ble_connected_handler(aid: Int, unique_hash: Int)
     {
         print("Connected to anchor \(aid)")
-        // self.start_uwb_session(aid: aid)
+
+        self.anchor_connection_status[aid] = true
 
         self._prepare_uwb_session(unique_hash)
 
@@ -213,6 +223,8 @@ class GuidingLite_UWBManager : NSObject
     func _ble_disconnected_handler(aid: Int, unique_hash: Int)
     {
         print("Disconnected from anchor \(aid)")
+
+        self.anchor_connection_status[aid] = false
 
         referenceDict[unique_hash]?.invalidate()
         // Remove the NI Session and Location values related to the device ID
