@@ -164,6 +164,8 @@ class GuidingLiteViewController: UIViewController
     {
         for (aid, telemetry) in uwb_manager!.anchor_data
         {
+            // print("Telemetry for anchor \(aid): \(telemetry)")
+
             let telem_bytes = TelemetryData_ToBytes(telemetry)
             
             self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aid), telem_bytes )
