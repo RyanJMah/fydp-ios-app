@@ -751,14 +751,14 @@
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Npq-GY-aYg">
                                 <rect key="frame" x="0.0" y="0.0" width="426" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" image="GuidingLite Logo" translatesAutoresizingMaskIntoConstraints="NO" id="SlU-Yl-nGV">
                                         <rect key="frame" x="-12" y="65" width="240" height="55"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FPo-Yu-Dkw">
-                                        <rect key="frame" x="342" y="74" width="48" height="38"/>
+                                        <rect key="frame" x="370" y="82" width="48" height="38"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="three_dots" title=""/>
@@ -787,19 +787,8 @@
                             </imageView>
                             <view alpha="0.40000000000000002" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uyj-kT-RMS">
                                 <rect key="frame" x="0.0" y="126" width="416" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zwC-19-Bun">
-                                        <rect key="frame" x="129" y="5" width="158.5" height="34.5"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Set Destination">
-                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="15"/>
-                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <action selector="setButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="j0a-3p-waU"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="close" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DS9-B0-rSD">
                                         <rect key="frame" x="8" y="5" width="85" height="35"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -812,7 +801,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DJJ-Lm-xQ8">
-                                        <rect key="frame" x="309" y="4" width="76" height="35"/>
+                                        <rect key="frame" x="332" y="5" width="76" height="35"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <buttonConfiguration key="configuration" style="filled" title="Go">
                                             <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="17"/>
@@ -820,6 +809,17 @@
                                         </buttonConfiguration>
                                         <connections>
                                             <action selector="goButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="9DL-cf-TW7"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zwC-19-Bun">
+                                        <rect key="frame" x="129" y="5" width="158.5" height="34.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Set Destination">
+                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="15"/>
+                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="setButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="j0a-3p-waU"/>
                                         </connections>
                                     </button>
                                 </subviews>
