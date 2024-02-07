@@ -75,6 +75,7 @@ class GuidingLiteViewController: UIViewController
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
     var uwb_manager: GuidingLite_UWBManager?
+    var heading_sensor: GuidingLite_HeadingSensor?
     var haptics_controller: GuidingLight_HapticsController?
     
     override func viewDidLoad()
@@ -113,12 +114,14 @@ class GuidingLiteViewController: UIViewController
     @objc func expensive_initialization()
     {
         self.showIPAddressInputDialog()
-        self.uwb_manager = GuidingLite_UWBManager(arView: self.arView)
 
         // self.mqtt_handler.connect_callback = self.mqtt_connect_callback
         // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
         // self.mqtt_client.set_handler(self.mqtt_handler)
         // self.mqtt_client.connect()
+
+        self.uwb_manager    = GuidingLite_UWBManager(arView: self.arView)
+        self.heading_sensor = GuidingLite_HeadingSensor()
     }
 
     @objc func haptics_init()
@@ -162,11 +165,11 @@ class GuidingLiteViewController: UIViewController
 
     @objc func telemetry_timer()
     {
-        for (aid, telemetry) in uwb_manager!.anchor_data
+        for (aid, anchor_data) in uwb_manager!.anchor_data
         {
-            // print("Telemetry for anchor \(aid): \(telemetry)")
+            // print("Telemetry for anchor \(aid): \(anchor_data)")
 
-            let telem_bytes = TelemetryData_ToBytes(telemetry)
+            let telem_bytes = AnchorData_ToBytes(anchor_data)
             
             self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aid), telem_bytes )
         }

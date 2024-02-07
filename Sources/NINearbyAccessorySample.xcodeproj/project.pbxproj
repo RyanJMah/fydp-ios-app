@@ -37,6 +37,8 @@
 		6DD8E87927E8D04D00981050 /* CustomActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD8E87827E8D04D00981050 /* CustomActivityIndicator.swift */; };
 		954EF22D2B73832000254312 /* GuidingLite_Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954EF22C2B73832000254312 /* GuidingLite_Haptics.swift */; };
 		95C4B81F2A724B4A0056B477 /* GuidingLite_MQTT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */; };
+		95F52C952B73B3C100E1B101 /* GuidingLite_IMU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F52C942B73B3C100E1B101 /* GuidingLite_IMU.swift */; };
+		95F52C972B73B3E400E1B101 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F52C962B73B3E400E1B101 /* CoreLocation.framework */; };
 		95F777992B731D19002EC21A /* GuidingLite_UWB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F777982B731D19002EC21A /* GuidingLite_UWB.swift */; };
 		95F7779B2B734FA6002EC21A /* GuidingLite_MDNS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7779A2B734FA6002EC21A /* GuidingLite_MDNS.swift */; };
 		A9A7C756227E1D6200F2CC59 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9A7C755227E1D6200F2CC59 /* README.md */; };
@@ -77,6 +79,8 @@
 		6DD8E87827E8D04D00981050 /* CustomActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomActivityIndicator.swift; sourceTree = "<group>"; };
 		954EF22C2B73832000254312 /* GuidingLite_Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_Haptics.swift; sourceTree = "<group>"; };
 		95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_MQTT.swift; sourceTree = "<group>"; };
+		95F52C942B73B3C100E1B101 /* GuidingLite_IMU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_IMU.swift; sourceTree = "<group>"; };
+		95F52C962B73B3E400E1B101 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		95F777982B731D19002EC21A /* GuidingLite_UWB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_UWB.swift; sourceTree = "<group>"; };
 		95F7779A2B734FA6002EC21A /* GuidingLite_MDNS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidingLite_MDNS.swift; sourceTree = "<group>"; };
 		A9A7C755227E1D6200F2CC59 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -89,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F52C972B73B3E400E1B101 /* CoreLocation.framework in Frameworks */,
 				3A5E198B2606CE5000837A4A /* CoreBluetooth.framework in Frameworks */,
 				3A5E19892606CE4B00837A4A /* NearbyInteraction.framework in Frameworks */,
 				F0B28D1C7D918BD9F6584239 /* Pods_Qorvo_Nearby_Interaction.framework in Frameworks */,
@@ -137,6 +142,7 @@
 				95C4B81E2A724B4A0056B477 /* GuidingLite_MQTT.swift */,
 				95F7779A2B734FA6002EC21A /* GuidingLite_MDNS.swift */,
 				954EF22C2B73832000254312 /* GuidingLite_Haptics.swift */,
+				95F52C942B73B3C100E1B101 /* GuidingLite_IMU.swift */,
 				95F777982B731D19002EC21A /* GuidingLite_UWB.swift */,
 				111A0CFF2B5E06880069C10C /* GuidingLiteViewController.swift */,
 			);
@@ -200,6 +206,7 @@
 		A9FCEFA62293634C008CC0CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95F52C962B73B3E400E1B101 /* CoreLocation.framework */,
 				3A5E198A2606CE5000837A4A /* CoreBluetooth.framework */,
 				3A5E19882606CE4B00837A4A /* NearbyInteraction.framework */,
 				D0F6EC761C87519091BC5161 /* Pods_Qorvo_Nearby_Interaction.framework */,
@@ -354,6 +361,7 @@
 				012C3068226FD13B00BADEF9 /* AppDelegate.swift in Sources */,
 				95F777992B731D19002EC21A /* GuidingLite_UWB.swift in Sources */,
 				95F7779B2B734FA6002EC21A /* GuidingLite_MDNS.swift in Sources */,
+				95F52C952B73B3C100E1B101 /* GuidingLite_IMU.swift in Sources */,
 				95C4B81F2A724B4A0056B477 /* GuidingLite_MQTT.swift in Sources */,
 				6DD8E87927E8D04D00981050 /* CustomActivityIndicator.swift in Sources */,
 				111A0D002B5E06880069C10C /* GuidingLiteViewController.swift in Sources */,

@@ -50,7 +50,7 @@ class GuidingLite_UWBManager : NSObject
 
     var isConverged = false
 
-    var anchor_data = [Int:TelemetryData]()
+    var anchor_data = [Int: AnchorData]()
 
     var anchor_connection_status = [Int:Bool]()
 
@@ -114,10 +114,10 @@ class GuidingLite_UWBManager : NSObject
             isLOS = true
         }
         
-        let telem_data = TelemetryData( distance_m: distance!,
-                                        azimuth_deg: Int16(azimuth),
-                                        elevation_deg: Int16(elevation),
-                                        los: isLOS )
+        let telem_data = AnchorData( distance_m: distance!,
+                                     azimuth_deg: Int16(azimuth),
+                                     elevation_deg: Int16(elevation),
+                                     los: isLOS )
         
         self.anchor_data[aid] = telem_data
 

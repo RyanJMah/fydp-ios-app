@@ -20,7 +20,7 @@ let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
-struct TelemetryData {
+struct AnchorData {
     let distance_m:    Float
     let azimuth_deg:   Int16
     let elevation_deg: Int16
@@ -28,10 +28,20 @@ struct TelemetryData {
 }
 
 // Function to convert the struct into [UInt8]
-func TelemetryData_ToBytes(_ telemetry: TelemetryData) -> [UInt8] {
+func AnchorData_ToBytes(_ telemetry: AnchorData) -> [UInt8] {
     var copy = telemetry
     return withUnsafeBytes(of: &copy) { Array($0) }
 }
+
+struct HeadingData {
+    let angle: Float
+}
+
+func HeadingData_ToBytes(_ heading: HeadingData) -> [UInt8] {
+    var copy = heading
+    return withUnsafeBytes(of: &copy) { Array($0) }
+}
+
 
 class MQTTClient {
     var mqtt: CocoaMQTT? = nil
@@ -132,7 +142,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
             }
             else
             {
-//                print("Failed to decode JSON string.")
+                print("Failed to decode JSON string.")
             }
         }
         
@@ -149,7 +159,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
             }
             else
             {
-//                print("Failed to decode JSON string.")
+                print("Failed to decode JSON string.")
             }
         }
         
@@ -164,7 +174,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
             }
             else
             {
-//                print("Failed to decode JSON string.")
+                print("Failed to decode JSON string.")
             }
         }
     }
