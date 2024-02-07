@@ -47,10 +47,20 @@ class GuidingLite_UWBManager : NSObject, NISessionDelegate, ARSessionDelegate
 
     func initialize()
     {
-        // ble.accessoryDiscoveryHandler = 
+        ble.accessoryDiscoveryHandler    = _ble_discovery_handler
+        // ble.accessoryTimeoutHandler      = _ble_timeout_handler
+        // ble.accessoryConnectedHandler    = _ble_connected_handler
+        // ble.accessoryDisconnectedHandler = _ble_disconnected_handler
+        // ble.accessoryDataHandler         = _ble_data_handler
+
+        ble.start()
     }
 
-    // func _ble_
+    func _ble_discovery_handler(_ aid: Int)
+    {
+        print("Discovered anchor \(aid), ")
+
+    }
 
     func _ble_send_data(_ data: Data, _ aid: Int)
     {
@@ -77,7 +87,7 @@ class GuidingLite_UWBManager : NSObject, NISessionDelegate, ARSessionDelegate
         self.anchor.addChild(entityDict[aid]!)
 
         // Start config info exchange
-//        self._send_data( Data([ NI_Messages.initialize.rawValue ]), aid )
+        self._ble_send_data( Data([ NI_Messages.initialize.rawValue ]), aid )
     }
 
 }

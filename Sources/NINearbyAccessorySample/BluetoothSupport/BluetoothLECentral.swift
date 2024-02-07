@@ -416,7 +416,7 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
         }
         
         if let didDiscoverHandler = accessoryDiscoveryHandler {
-            didDiscoverHandler(qorvoDevices.count - 1)
+            didDiscoverHandler(aID)
         }
     }
 

@@ -72,7 +72,7 @@ class GuidingLiteViewController: UIViewController
     
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
-    var dataChannel = DataCommunicationChannel()
+    var uwb_manager: GuidingLite_UWBManager = GuidingLite_UWBManager()
     
     override func viewDidLoad()
     {
@@ -92,9 +92,7 @@ class GuidingLiteViewController: UIViewController
 
         // showIPAddressInputDialog()
 
-        dataChannel.accessoryDiscoveryHandler = self.anchor_discovered_handler
-
-        dataChannel.start()
+        self.uwb_manager.initialize()
     }
     
     func anchor_discovered_handler(index: Int)
