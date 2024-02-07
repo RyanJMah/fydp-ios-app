@@ -399,6 +399,10 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
             aID = Int( dev_name.components(separatedBy: "_")[2] )!
             print("Adding anchor \(aID)")
         }
+        else
+        {
+            return
+        }
         
         qorvoDevices.append(qorvoDevice(peripheral: peripheral,
                                         uniqueID: peripheral.hashValue,

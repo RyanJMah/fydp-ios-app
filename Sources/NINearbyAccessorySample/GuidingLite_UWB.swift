@@ -43,18 +43,20 @@ class GuidingLite_UWBManager : NSObject, NISessionDelegate, ARSessionDelegate
 
     var sessions_dict = [Int: NISession]()
 
-    var dataChannel: DataCommunicationChannel
+    var ble: DataCommunicationChannel = DataCommunicationChannel()
 
-    init (inDataChannel: DataCommunicationChannel)
+    func initialize()
     {
-        self.dataChannel = inDataChannel
+        // ble.accessoryDiscoveryHandler = 
     }
 
-    func _send_data(_ data: Data, _ aid: Int)
+    // func _ble_
+
+    func _ble_send_data(_ data: Data, _ aid: Int)
     {
         do
         {
-            try self.dataChannel.sendData(data, aid)
+            try self.ble.sendData(data, aid)
         }
         catch
         {
@@ -75,7 +77,7 @@ class GuidingLite_UWBManager : NSObject, NISessionDelegate, ARSessionDelegate
         self.anchor.addChild(entityDict[aid]!)
 
         // Start config info exchange
-        self._send_data( Data([ NI_Messages.initialize.rawValue ]), aid )
+//        self._send_data( Data([ NI_Messages.initialize.rawValue ]), aid )
     }
 
 }
