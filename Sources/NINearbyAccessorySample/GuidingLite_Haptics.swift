@@ -9,6 +9,13 @@
 import Foundation
 import CoreHaptics
 
+let DEFAULT_BURST_DURATION: Float = 0.25
+
+func ms_to_us(_ ms: UInt32) -> UInt32
+{
+    return ms * 1000
+}
+
 class GuidingLight_HapticsController
 {
     // Haptic Engine & Player State:
@@ -16,10 +23,33 @@ class GuidingLight_HapticsController
 
     private var player: CHHapticAdvancedPatternPlayer!
 
-    private var burst_duration: TimeInterval = 0.25
+    private var burst_duration: TimeInterval = TimeInterval(DEFAULT_BURST_DURATION)
 
-    private var intensity: Float = 1.0
-    private var sharpness: Float = 0.5
+    private var intensity = CHHapticEventParameter( parameterID: .hapticIntensity,
+                                                    value: 0.5 )
+
+    private var sharpness = CHHapticEventParameter( parameterID: .hapticSharpness,
+                                                    value: 0.5 )
+
+    private var double_beep_pattern = [CHHapticEvent]()
+
+    func init_double_beep_pattern()
+    {
+        self.set_params(intensity: 100, sharpness: 100)
+        let continuousEvent1 = CHHapticEvent( eventType: .hapticContinuous,
+                                              parameters: [self.intensity, self.sharpness],
+                                              relativeTime: 0,
+                                              duration: 0.185 )
+
+        self.set_params(intensity: 100, sharpness: 100)
+        let continuousEvent2 = CHHapticEvent( eventType: .hapticContinuous,
+                                              parameters: [self.intensity, self.sharpness],
+                                              relativeTime: 0.25,
+                                              duration: 0.35 )
+
+        self.double_beep_pattern.append(continuousEvent1)
+        self.double_beep_pattern.append(continuousEvent2)
+    }
 
     func init_haptic_engine()
     {
@@ -99,38 +129,21 @@ class GuidingLight_HapticsController
         }
     }
 
-
-    init()
+    func schedule_next_burst()
     {
-        init_haptic_engine()
-
         _ = Timer.scheduledTimer( timeInterval: self.burst_duration,
                                   target: self,
                                   selector: #selector(play_haptic_burst),
                                   userInfo: nil,
-                                  repeats: true )
+                                  repeats: false )
     }
 
-    @objc func play_haptic_burst()
+    func play_pattern(_ pattern: [CHHapticEvent])
     {
-        // Create an intensity parameter:
-        let intensity = CHHapticEventParameter( parameterID: .hapticIntensity,
-                                                value: self.intensity )
-
-        // Create a sharpness parameter:
-        let sharpness = CHHapticEventParameter( parameterID: .hapticSharpness,
-                                                value: self.sharpness )
-
-        // Create a continuous event with a long duration from the parameters.
-        let continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
-                                             parameters: [intensity, sharpness],
-                                             relativeTime: 0,
-                                             duration: self.burst_duration )
-
         do
         {
             // Create a pattern from the continuous haptic event.
-            let pattern = try CHHapticPattern(events: [continuousEvent], parameters: [])
+            let pattern = try CHHapticPattern(events: pattern, parameters: [])
 
             // Create a player from the continuous haptic pattern.
             self.player = try engine.makeAdvancedPlayer(with: pattern)
@@ -153,54 +166,55 @@ class GuidingLight_HapticsController
         }
     }
 
-    // Contains example code for adjusting the intensity and sharpness of a continuous haptic pattern,
-    // not used right now though
-    private func adjust_haptics()
+    @objc func play_haptic_burst()
     {
-        // The intensity should be highest at the top, opposite of the iOS y-axis direction, so subtract.
-        let dynamicIntensity: Float = 0.2
+        // Create a continuous event with a long duration from the parameters.
+        let continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
+                                             parameters: [self.intensity, self.sharpness],
+                                             relativeTime: 0,
+                                             duration: self.burst_duration )
 
-        // Dynamic parameters range from -0.5 to 0.5 to map the final sharpness to the [0,1] range.
-        let dynamicSharpness: Float = 0
+        self.play_pattern( [continuousEvent] )
 
-        // Create dynamic parameters for the updated intensity & sharpness.
-        let intensityParameter = CHHapticDynamicParameter( parameterID: .hapticIntensityControl,
-                                                           value: dynamicIntensity,
-                                                           relativeTime: 0)
+        self.schedule_next_burst()
+    }
 
-        let sharpnessParameter = CHHapticDynamicParameter( parameterID: .hapticSharpnessControl,
-                                                           value: dynamicSharpness,
-                                                           relativeTime: 0)
+    init()
+    {
+        init_double_beep_pattern()
 
-        // Send dynamic parameters to the haptic player.
-        do
-        {
-            try self.player.sendParameters([intensityParameter, sharpnessParameter], atTime: 0)
-        }
-        catch let error
-        {
-            print("Dynamic Parameter Error: \(error)")
-        }
+        init_haptic_engine()
 
-        // Warm engine.
-        do
-        {
-            // Begin playing continuous pattern.
-            try self.player.start(atTime: CHHapticTimeImmediate)
-        }
-        catch let error
-        {
-            print("Error starting the continuous haptic player: \(error)")
-        }
+        // self.schedule_next_burst()
 
-        // Stop playing the haptic pattern.
-        // do
-        // {
-        //     try self.player.stop(atTime: CHHapticTimeImmediate)
-        // }
-        // catch let error
-        // {
-        //     print("Error stopping the continuous haptic player: \(error)")
-        // }
+        self.play_double_beep()
+    }
+
+    // Burst duration is in ms
+    func set_params(intensity: Int, sharpness: Int, burst_duration: Float = DEFAULT_BURST_DURATION)
+    {
+        self.intensity.value = Float(intensity) / 100.0
+        self.sharpness.value = Float(sharpness) / 100.0
+        self.burst_duration = TimeInterval(burst_duration) / 1000.0
+    }
+
+    func get_intensity() -> Int
+    {
+        return Int(self.intensity.value * 100)
+    }
+
+    func get_sharpness() -> Int
+    {
+        return Int(self.sharpness.value * 100)
+    }
+
+    func get_burst_duration() -> Float
+    {
+        return Float(self.burst_duration)
+    }
+
+    func play_double_beep()
+    {
+        self.play_pattern(self.double_beep_pattern)
     }
 }
