@@ -93,10 +93,19 @@ class GuidingLiteViewController: UIViewController
         /*
          * Schedule the expensive initialization to run after the view has loaded,
          * so that the UI remains responsive.
+         *
+         * Haptics will be initialized even after these, since it is technically the
+         * most "real-time" task, and the UWB initialization interferes with it
          */
         _ = Timer.scheduledTimer( timeInterval: 1,
                                   target: self,
                                   selector: #selector(self.expensive_initialization),
+                                  userInfo: nil,
+                                  repeats: false )  // Only run once
+
+        _ = Timer.scheduledTimer( timeInterval: 5,
+                                  target: self,
+                                  selector: #selector(self.haptics_init),
                                   userInfo: nil,
                                   repeats: false )  // Only run once
     }
@@ -104,14 +113,17 @@ class GuidingLiteViewController: UIViewController
     @objc func expensive_initialization()
     {
         self.showIPAddressInputDialog()
-
-        self.uwb_manager        = GuidingLite_UWBManager(arView: self.arView)
-        self.haptics_controller = GuidingLight_HapticsController()
+        self.uwb_manager = GuidingLite_UWBManager(arView: self.arView)
 
         // self.mqtt_handler.connect_callback = self.mqtt_connect_callback
         // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
         // self.mqtt_client.set_handler(self.mqtt_handler)
         // self.mqtt_client.connect()
+    }
+
+    @objc func haptics_init()
+    {
+        self.haptics_controller = GuidingLight_HapticsController()
     }
 
     @objc func mqtt_connect_callback()
