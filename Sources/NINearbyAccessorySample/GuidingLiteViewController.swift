@@ -82,19 +82,78 @@ class GuidingLiteViewController: UIViewController
 
         locationPinImage.isHidden = true
 
-        // GuidingLite: heartbeat timer
-        _ = Timer.scheduledTimer( timeInterval: 10,
+        // Main UI timer, 200ms
+        _ = Timer.scheduledTimer( timeInterval: 0.2,
                                   target: self,
-                                  selector: #selector(self.send_mqtt_heartbeat),
+                                  selector: #selector(ui_timer),
                                   userInfo: nil,
                                   repeats: true )
 
-        // Main UI timer, 200ms
-        _ = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(timerHandler), userInfo: nil, repeats: true)
-
-        // showIPAddressInputDialog()
+        /*
+         * Schedule MQTT initialization after 1 second, can't do it here because
+         * Apple doesn't like background sockets.
+         */
+        _ = Timer.scheduledTimer( timeInterval: 1,
+                                  target: self,
+                                  selector: #selector(self.mqtt_init),
+                                  userInfo: nil,
+                                  repeats: false )  // Only run once
 
         self.uwb_manager = GuidingLite_UWBManager(arView: self.arView)
+    }
+
+    @objc func mqtt_init()
+    {
+        self.showIPAddressInputDialog()
+
+        // self.mqtt_handler.connect_callback = self.mqtt_connect_callback
+        // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
+        // self.mqtt_client.set_handler(self.mqtt_handler)
+        // self.mqtt_client.connect()
+    }
+
+    @objc func mqtt_connect_callback()
+    {
+        // Start mqtt timers after connection
+
+        // GuidingLite: heartbeat timer
+        _ = Timer.scheduledTimer( timeInterval: 10,
+                                  target: self,
+                                  selector: #selector(self.mqtt_heartbeat_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+
+        // Telemetry timer
+        _ = Timer.scheduledTimer( timeInterval: 1/10,   // 10Hz
+                                  target: self,
+                                  selector: #selector(self.telemetry_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+    }
+
+
+    @objc func ui_timer()
+    {
+        self.updateUserArrowPos(pos: mqtt_handler.userPosition)
+        self.updateDirectionArrow(angle: mqtt_handler.arrowAngle)
+    }
+
+    @objc func mqtt_heartbeat_timer()
+    {
+        DispatchQueue.global(qos: .default).async
+        {
+            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
+        }
+    }
+
+    @objc func telemetry_timer()
+    {
+        for (aid, telemetry) in uwb_manager!.anchor_data
+        {
+            let telem_bytes = TelemetryData_ToBytes(telemetry)
+            
+            self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aid), telem_bytes )
+        }
     }
     
     func anchor_discovered_handler(index: Int)
@@ -102,7 +161,6 @@ class GuidingLiteViewController: UIViewController
         print("Anchor discovered!")
     }
 
-    
     func showIPAddressInputDialog()
     {
         self.first_time_mqtt_init = false
@@ -121,6 +179,8 @@ class GuidingLiteViewController: UIViewController
                     return
                 }
 
+                strongSelf.mqtt_handler.connect_callback = strongSelf.mqtt_connect_callback
+
                 strongSelf.mqtt_client.initialize(ipAddress)
                 strongSelf.mqtt_client.set_handler(strongSelf.mqtt_handler)
                 strongSelf.mqtt_client.connect()
@@ -131,21 +191,6 @@ class GuidingLiteViewController: UIViewController
         alertController.addAction(okAction)
 
         present(alertController, animated: true, completion: nil)
-    }
-    
-    @objc func timerHandler()
-    {
-        // TODO: Implement the settings page similar to Qorvo demo and add settings view so I can uncomment all this.
-        // ---------------------------------------------------------
-        // MQTT SHIT
-        // if ( self.first_time_mqtt_init )
-        // {
-        //     self.showIPAddressInputDialog()
-        // }
-        // ---------------------------------------------------------
-
-        self.updateUserArrowPos(pos: mqtt_handler.userPosition)
-        self.updateDirectionArrow(angle: mqtt_handler.arrowAngle)
     }
     
     @IBAction func goButtonPressed(_ sender: UIButton)
@@ -172,14 +217,6 @@ class GuidingLiteViewController: UIViewController
         // Add your logic here
         currDestState = S_INIT
         locationPinImage.isHidden = true
-    }
-    
-    @objc func send_mqtt_heartbeat()
-    {
-        DispatchQueue.global(qos: .default).async
-        {
-            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
-        }
     }
     
     @objc func send_mqtt_pin_location()

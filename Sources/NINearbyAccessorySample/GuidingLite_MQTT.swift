@@ -18,6 +18,7 @@ let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
 let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
 let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
 
+let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
 struct TelemetryData {
     let distance_m:    Float
@@ -41,7 +42,7 @@ class MQTTClient {
         let clientID = "GuidingLite_iOS_\(USER_ID)"
         
         self.mqtt = CocoaMQTT.init(clientID: clientID, host: ip, port: 1883)
-        self.mqtt?.logLevel = .info
+        self.mqtt?.logLevel = .warning
         self.mqtt?.keepAlive = 60
     }
     
@@ -50,6 +51,11 @@ class MQTTClient {
         self.mqtt?.delegate = delegate
     }
 
+    func is_connected() -> Bool
+    {
+        return (self.mqtt?.connState == .connected)
+    }
+    
     func connect()
     {
         let success = mqtt?.connect(timeout: 60)
@@ -58,6 +64,12 @@ class MQTTClient {
     
     func publish(_ topic: String, _ msg: String)
     {
+        if !is_connected()
+        {
+            print("WARNING: tried to publish to MQTT while not connected.")
+            return
+        }
+
         let msg = CocoaMQTTMessage(topic: topic, string: msg)
         self.mqtt?.publish(msg)
     }
@@ -73,16 +85,22 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     var direction       = ""
     var userPosition    = CGPoint(x: 0, y: 0)
     var arrowAngle      = Float(0.0)
+
+    var connect_callback: (() -> Void)? = nil
+
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
         mqtt.subscribe("gl/user/\(USER_ID)/pathing")
-        mqtt.subscribe(HEARTBEAT_TOPIC)
         mqtt.subscribe(USER_COORD_TOPIC)
         mqtt.subscribe(DEST_COORD_TOPIC)
         mqtt.subscribe(ARROW_ANGLE_TOPIC)
 
+        if let callback = connect_callback
+        {
+            callback()
+        }
     }
     
     ///

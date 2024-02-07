@@ -4,6 +4,13 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>To find the server</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_mqtt._tcp.</string>
+		<string>_mqtt._tcp.local.</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Qorvo Nearby Interaction</string>
 	<key>CFBundleExecutable</key>
