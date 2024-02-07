@@ -165,13 +165,29 @@ class GuidingLiteViewController: UIViewController
 
     @objc func telemetry_timer()
     {
+        /*
+         * FIXME: Reading the heading data in the same timer that
+         *        sends the telemetry may cause latency issues.
+         *
+         *        If it does, move the heading data reading to a separate
+         *        timer.
+         */
+
+        let angle = self.heading_sensor?.get_orientation()
+
+        let heading_data = HeadingData( angle: Float(angle!) )
+        let heading_bytes = HeadingData_ToBytes(heading_data)
+
+        self.mqtt_client.publish_bytes( HEADING_TOPIC, heading_bytes )
+        // print("Heading: \(angle!)")
+
         for (aid, anchor_data) in uwb_manager!.anchor_data
         {
-            // print("Telemetry for anchor \(aid): \(anchor_data)")
-
             let telem_bytes = AnchorData_ToBytes(anchor_data)
             
             self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aid), telem_bytes )
+
+            // print("Telemetry for anchor \(aid): \(anchor_data)")
         }
     }
     
