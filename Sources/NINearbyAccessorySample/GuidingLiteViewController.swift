@@ -93,6 +93,8 @@ class GuidingLiteViewController: UIViewController
         // showIPAddressInputDialog()
 
         dataChannel.accessoryDiscoveryHandler = self.anchor_discovered_handler
+
+        dataChannel.start()
     }
     
     func anchor_discovered_handler(index: Int)
