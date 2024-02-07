@@ -528,10 +528,10 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @objc func timerHandler() {
         // ---------------------------------------------------------
         // MQTT SHIT
-        if ( self.first_time_mqtt_init )
-        {
-            showIPAddressInputDialog()
-        }
+        // if ( self.first_time_mqtt_init )
+        // {
+        //     showIPAddressInputDialog()
+        // }
         // ---------------------------------------------------------
         
         
@@ -727,7 +727,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     }
     
     // MARK: - Data channel methods
-    func accessorySharedData(data: Data, accessoryName: String, deviceID: Int) {
+    func accessorySharedData(data: Data, accessoryName: String, aid: Int, deviceID: Int) {
         // The accessory begins each message with an identifier byte.
         // Ensure the message length is within a valid range.
         if data.count < 1 {
@@ -767,13 +767,13 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
     }
     
-    func accessoryInclude(index: Int) {
+    func accessoryInclude(aid: Int, index: Int) {
         accessoriesTable.beginUpdates()
         accessoriesTable.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         accessoriesTable.endUpdates()
     }
     
-    func accessoryRemove(deviceID: Int) {
+    func accessoryRemove(aid: Int, deviceID: Int) {
         var index = 0
         
         for case let cell as DeviceTableViewCell in accessoriesTable.visibleCells {
@@ -802,7 +802,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         }
     }
     
-    func accessoryConnected(deviceID: Int) {
+    func accessoryConnected(aid: Int, deviceID: Int) {
         // If no device is selected, select the new device
         if selectedAccessory == -1 {
             selectDevice(deviceID)
@@ -824,7 +824,7 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
         sendDataToAccessory(msg, deviceID)
     }
     
-    func accessoryDisconnected(deviceID: Int) {
+    func accessoryDisconnected(aid: Int, deviceID: Int) {
         
         referenceDict[deviceID]?.invalidate()
         // Remove the NI Session and Location values related to the device ID

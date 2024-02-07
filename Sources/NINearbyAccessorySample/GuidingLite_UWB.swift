@@ -56,7 +56,7 @@ class GuidingLite_UWBManager : NSObject, NISessionDelegate, ARSessionDelegate
         ble.start()
     }
 
-    func _ble_discovery_handler(_ aid: Int)
+    func _ble_discovery_handler(aid: Int, index: Int)
     {
         print("Discovered anchor \(aid), ")
 

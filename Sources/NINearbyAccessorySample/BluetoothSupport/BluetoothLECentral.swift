@@ -131,11 +131,11 @@ class DataCommunicationChannel: NSObject {
     // Change this value based on your app's testing use case.
     let defaultIterations = 5
     
-    var accessoryDiscoveryHandler: ((Int) -> Void)?
-    var accessoryTimeoutHandler: ((Int) -> Void)?
-    var accessoryConnectedHandler: ((Int) -> Void)?
-    var accessoryDisconnectedHandler: ((Int) -> Void)?
-    var accessoryDataHandler: ((Data, String, Int) -> Void)?
+    var accessoryDiscoveryHandler: ((Int, Int) -> Void)?
+    var accessoryTimeoutHandler: ((Int, Int) -> Void)?
+    var accessoryConnectedHandler: ((Int, Int) -> Void)?
+    var accessoryDisconnectedHandler: ((Int, Int) -> Void)?
+    var accessoryDataHandler: ((Data, String, Int, Int) -> Void)?
 
     var bluetoothReady = false
     var shouldStartWhenReady = false
@@ -175,7 +175,7 @@ class DataCommunicationChannel: NSObject {
                         qorvoDevices.remove(at: index)
                     }
                     if let didTimeoutHandler = accessoryTimeoutHandler {
-                        didTimeoutHandler(deviceID!)
+                        didTimeoutHandler(qorvoDevice!.GuidingLite_aid, deviceID!)
                     }
                 }
             }
@@ -416,7 +416,7 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
         }
         
         if let didDiscoverHandler = accessoryDiscoveryHandler {
-            didDiscoverHandler(aID)
+            didDiscoverHandler(aID, qorvoDevices.count - 1)
         }
     }
 
@@ -456,7 +456,7 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
         qorvoDevice!.blePeripheralStatus = statusDiscovered
         
         if let didDisconnectHandler = accessoryDisconnectedHandler {
-            didDisconnectHandler(uniqueID)
+            didDisconnectHandler(qorvoDevice!.GuidingLite_aid, uniqueID)
         }
         
         // Resume scanning after disconnection.
@@ -547,7 +547,7 @@ extension DataCommunicationChannel: CBPeripheralDelegate {
         
         // Wait for the peripheral to send data.
         if let didConnectHandler = accessoryConnectedHandler {
-            didConnectHandler(peripheral.hashValue)
+            didConnectHandler(qorvoDevice!.GuidingLite_aid, peripheral.hashValue)
         }
     }
 
@@ -569,7 +569,7 @@ extension DataCommunicationChannel: CBPeripheralDelegate {
         let qorvoDevice = getDeviceFromUniqueID(uniqueID)
         
         if let dataHandler = self.accessoryDataHandler, let accessoryName = qorvoDevice?.blePeripheralName {
-            dataHandler(characteristicData, accessoryName, uniqueID)
+            dataHandler(characteristicData, accessoryName, qorvoDevice!.GuidingLite_aid, uniqueID)
         }
     }
 
