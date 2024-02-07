@@ -225,6 +225,23 @@ class DataCommunicationChannel: NSObject {
             throw BluetoothLECentralError.noPeripheral
         }
     }
+
+    func connectAnchor(_ aid: Int) throws {
+        
+        if let deviceToConnect = qorvoDevices.first(where: {$0?.GuidingLite_aid == aid}) {
+            // Throw error if status is not Discovered
+            if deviceToConnect!.blePeripheralStatus != statusDiscovered {
+                return
+            }
+            // Connect to the peripheral.
+            logger.info("Connecting to Anchor \(deviceToConnect!.blePeripheral)")
+            deviceToConnect!.blePeripheralStatus = statusConnected
+            centralManager.connect(deviceToConnect!.blePeripheral, options: nil)
+        }
+        else {
+            throw BluetoothLECentralError.noPeripheral
+        }
+    }
     
     func disconnectPeripheral(_ uniqueID: Int) throws {
         

@@ -51,6 +51,8 @@ class GuidingLiteViewController: UIViewController
     @IBOutlet weak var setDestButton: UIButton!
     @IBOutlet weak var goDestButton: UIButton!
 
+    @IBOutlet weak var arView: ARView!
+
     let S_INIT = 0
     let S_SET_DEST = 1
     let S_GO = 2
@@ -72,7 +74,7 @@ class GuidingLiteViewController: UIViewController
     
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
-    var uwb_manager: GuidingLite_UWBManager = GuidingLite_UWBManager()
+    var uwb_manager: GuidingLite_UWBManager?
     
     override func viewDidLoad()
     {
@@ -92,7 +94,7 @@ class GuidingLiteViewController: UIViewController
 
         // showIPAddressInputDialog()
 
-        self.uwb_manager.initialize()
+        self.uwb_manager = GuidingLite_UWBManager(arView: self.arView)
     }
     
     func anchor_discovered_handler(index: Int)
@@ -136,10 +138,10 @@ class GuidingLiteViewController: UIViewController
         // TODO: Implement the settings page similar to Qorvo demo and add settings view so I can uncomment all this.
         // ---------------------------------------------------------
         // MQTT SHIT
-        if ( self.first_time_mqtt_init )
-        {
-            self.showIPAddressInputDialog()
-        }
+        // if ( self.first_time_mqtt_init )
+        // {
+        //     self.showIPAddressInputDialog()
+        // }
         // ---------------------------------------------------------
 
         self.updateUserArrowPos(pos: mqtt_handler.userPosition)
