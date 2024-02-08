@@ -19,7 +19,7 @@ import Foundation
 
 var g_uwb_manager: GuidingLite_UWBManager?
 
-func decodeJSONString(_ jsonString: String) -> [String: Any]? {
+func decodeJSON(_ jsonString: String) -> [String: Any]? {
     // Step 1: Convert the JSON string to Data
     guard let jsonData = jsonString.data(using: .utf8) else {
         print("Failed to convert JSON string to Data.")
@@ -36,6 +36,24 @@ func decodeJSONString(_ jsonString: String) -> [String: Any]? {
         }
     } catch {
         print("Error parsing JSON: \(error)")
+        return nil
+    }
+}
+
+func serializeJSON(_ jsonObject: [String: Any]) -> String? {
+    // Step 1: Convert the JSON object to Data
+    do {
+        let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
+        
+        // Step 2: Convert the Data to a string
+        if let jsonString = String(data: jsonData, encoding: .utf8) {
+            return jsonString
+        } else {
+            print("Failed to convert Data to String.")
+            return nil
+        }
+    } catch {
+        print("Error serializing JSON: \(error)")
         return nil
     }
 }
@@ -244,7 +262,19 @@ class GuidingLiteViewController: UIViewController
 
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
+        if self.real_life_to_png_scale == nil
+        {
+            return
+        }
+
         // print("Received position: x = \(x), y = \(y), heading = \(heading)")
+
+        let png_x = x / self.real_life_to_png_scale!
+        let png_y = y / self.real_life_to_png_scale!
+
+        let point = CGPoint(x: CGFloat(png_x), y: CGFloat(png_y))
+
+        self.updateUserArrowPos(pos: point)
     }
 
     @objc func mqtt_heartbeat_timer()
@@ -270,7 +300,7 @@ class GuidingLiteViewController: UIViewController
         let heading_data = HeadingData( angle: Float(angle!) )
         let heading_bytes = HeadingData_ToBytes(heading_data)
 
-        self.mqtt_client.publish_bytes( HEADING_TOPIC, heading_bytes )
+        self.mqtt_client.publish_bytes( HEADING_DATA_TOPIC, heading_bytes )
         // print("Heading: \(angle!)")
 
         for (aid, anchor_data) in uwb_manager!.anchor_data
@@ -341,13 +371,17 @@ class GuidingLiteViewController: UIViewController
         locationPinImage.isHidden = true
     }
     
-    @objc func send_mqtt_pin_location()
+    func send_mqtt_pin_location()
     {
         let x = pinLocation.x
         let y = pinLocation.y
+
+        let dict = ["endpoint": [x, y, 0]]
+        let json = serializeJSON(dict)
+
         DispatchQueue.global(qos: .default).async
         {
-            // self.mqtt_client.publish( DEST_COORD_TOPIC, "{x: \(x), y: \(y)}" )
+            self.mqtt_client.publish( PATHFINDING_CONFIG_TOPIC, json! )
         }
     }
     

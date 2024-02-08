@@ -11,18 +11,20 @@ import CocoaMQTT
 
 let USER_ID = 69
 
-let HEARTBEAT_TOPIC     = "gl/user/\(USER_ID)/heartbeat"
-let DATA_TOPIC_BASE     = "gl/user/\(USER_ID)/data/"
+let HEARTBEAT_TOPIC    = "gl/user/\(USER_ID)/heartbeat"
+let DATA_TOPIC_BASE    = "gl/user/\(USER_ID)/data/"
+let HEADING_DATA_TOPIC = "gl/user/\(USER_ID)/data/heading"
 
 // let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
 // let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
 // let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
 
-let METADATA_TOPIC      = "gl/server/metadata"
+let METADATA_TOPIC           = "gl/server/metadata"
+let PATHFINDING_CONFIG_TOPIC = "gl/server/pathfinding/config"
 
-let PATHING_TOPIC       = "gl/user/\(USER_ID)/path"
-let HEADING_TOPIC       = "gl/user/\(USER_ID)/target_heading"
-let POSITION_TOPIC      = "gl/user/\(USER_ID)/position"
+let PATHING_TOPIC  = "gl/user/\(USER_ID)/path"
+let HEADING_TOPIC  = "gl/user/\(USER_ID)/target_heading"
+let POSITION_TOPIC = "gl/user/\(USER_ID)/position"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
@@ -171,7 +173,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                 // if let callback = target_heading_callback
                 // {
                 //     let jsonString = message.string
-                //     if let decodedDictionary = decodeJSONString(jsonString!)
+                //     if let decodedDictionary = decodeJSON(jsonString!)
                 //     {
                 //         callback(decodedDictionary["angle"] as! Float)
                 //     }
@@ -180,19 +182,19 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
             case POSITION_TOPIC:
                 if let callback = position_callback
                 {
-                    if let decodedDict = decodeJSONString(message.string!)
+                    if let decodedDict = decodeJSON(message.string!)
                     {
                         // print(decodedDictionary)
                         callback( decodedDict["x"] as! Float,
-                                 decodedDict["y"] as! Float,
-                                 decodedDict["heading"] as! Float )
+                                  decodedDict["y"] as! Float,
+                                  decodedDict["heading"] as! Float )
                     }
                 }
 
             case METADATA_TOPIC:
                 if let callback = metadata_callback
                 {
-                    if let decodedDict = decodeJSONString(message.string!)
+                    if let decodedDict = decodeJSON(message.string!)
                     {
                         callback(decodedDict)
                     }
@@ -207,7 +209,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         // {
         //     // let jsonString = message.string
             
-        //     // if let decodedDictionary = decodeJSONString(jsonString!)
+        //     // if let decodedDictionary = decodeJSON(jsonString!)
         //     // {
         //     //     direction = decodedDictionary["direction"] as! String
         //     //     print("Direction: \(decodedDictionary["direction"]!)")
@@ -222,7 +224,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         // {
         //     let jsonString = message.string
             
-        //     if let decodedDictionary = decodeJSONString(jsonString!)
+        //     if let decodedDictionary = decodeJSON(jsonString!)
         //     {
         //         userPosition.x = decodedDictionary["x"] as! CGFloat
         //         print("user_x: \(decodedDictionary["x"]!)")
@@ -239,7 +241,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         // {
         //     let jsonString = message.string
             
-        //     if let decodedDictionary = decodeJSONString(jsonString!)
+        //     if let decodedDictionary = decodeJSON(jsonString!)
         //     {
         //         arrowAngle = decodedDictionary["angle"] as! Float
         //         print("arrow_angle: \(decodedDictionary["angle"]!)")
