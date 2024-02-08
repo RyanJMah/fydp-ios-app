@@ -18,6 +18,8 @@ let DATA_TOPIC_BASE     = "gl/user/\(USER_ID)/data/"
 // let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
 // let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
 
+let METADATA_TOPIC      = "gl/server/metadata"
+
 let PATHING_TOPIC       = "gl/user/\(USER_ID)/path"
 let HEADING_TOPIC       = "gl/user/\(USER_ID)/target_heading"
 let POSITION_TOPIC      = "gl/user/\(USER_ID)/position"
@@ -100,16 +102,21 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     var userPosition    = CGPoint(x: 0, y: 0)
     var arrowAngle      = Float(0.0)
 
+    ////////////////////////////////////////////////////////////////////////
+    // Callbacks
+
     var connect_callback: (() -> Void)? = nil
 
-    // 
     var pathing_callback: ((String) -> Void)? = nil
 
     // Takes in x, y, heading
     var position_callback: ((Float, Float, Float) -> Void)? = nil
 
-    // Takes in Target heading
     var target_heading_callback: ((Float) -> Void)? = nil
+
+    // Takes in dictionary of metadata
+    var metadata_callback: ( ([String: Any]) -> Void )? = nil
+    ////////////////////////////////////////////////////////////////////////
 
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
@@ -119,6 +126,8 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         mqtt.subscribe(PATHING_TOPIC)
         mqtt.subscribe(HEADING_TOPIC)
         mqtt.subscribe(POSITION_TOPIC)
+
+        mqtt.subscribe(METADATA_TOPIC)
 
         // mqtt.subscribe("gl/user/\(USER_ID)/pathing")
         // mqtt.subscribe(USER_COORD_TOPIC)
@@ -177,6 +186,15 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                         callback( decodedDict["x"] as! Float,
                                  decodedDict["y"] as! Float,
                                  decodedDict["heading"] as! Float )
+                    }
+                }
+
+            case METADATA_TOPIC:
+                if let callback = metadata_callback
+                {
+                    if let decodedDict = decodeJSONString(message.string!)
+                    {
+                        callback(decodedDict)
                     }
                 }
 

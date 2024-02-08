@@ -150,6 +150,8 @@ class GuidingLiteViewController: UIViewController
     var uwb_manager: GuidingLite_UWBManager?
     var heading_sensor: GuidingLite_HeadingSensor?
     var haptics_controller: GuidingLight_HapticsController?
+
+    var real_life_to_png_scale: Float?
     
     override func viewDidLoad()
     {
@@ -159,6 +161,7 @@ class GuidingLiteViewController: UIViewController
 
         self.mqtt_handler.connect_callback  = self.mqtt_connect_callback
         self.mqtt_handler.position_callback = self.mqtt_position_msg_callback
+        self.mqtt_handler.metadata_callback = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
         _ = Timer.scheduledTimer( timeInterval: 0.2,
@@ -232,9 +235,16 @@ class GuidingLiteViewController: UIViewController
                                   repeats: true )
     }
 
+    func mqtt_metadata_msg_callback(metadata: [String: Any])
+    {
+        // print("Received metadata: \(metadata)")
+        // print("scale = \(metadata["real_life_to_floorplan_png_scale"])")
+        self.real_life_to_png_scale = metadata["real_life_to_floorplan_png_scale"] as? Float
+    }
+
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
-        print("Received position: x = \(x), y = \(y), heading = \(heading)")
+        // print("Received position: x = \(x), y = \(y), heading = \(heading)")
     }
 
     @objc func mqtt_heartbeat_timer()
