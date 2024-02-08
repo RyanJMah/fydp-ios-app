@@ -160,10 +160,10 @@ class GuidingLiteViewController: UIViewController
     var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
     
     // Map borders
-    var mapTopLeft:     CGPoint? = nil
-    var mapTopRight:    CGPoint? = nil
-    var mapBottomLeft:  CGPoint? = nil
-    var mapBottomRight: CGPoint? = nil
+    var mapTopLeft:     CGPoint = CGPoint(x: 0.0, y: 0.0)
+    var mapTopRight:    CGPoint = CGPoint(x: 0.0, y: 0.0)
+    var mapBottomLeft:  CGPoint = CGPoint(x: 0.0, y: 0.0)
+    var mapBottomRight: CGPoint = CGPoint(x: 0.0, y: 0.0)
 
     var map_width:  Float? = nil
     var map_height: Float? = nil
@@ -180,14 +180,30 @@ class GuidingLiteViewController: UIViewController
     var heading_sensor: GuidingLite_HeadingSensor?
     var haptics_controller: GuidingLight_HapticsController?
 
-    var real_life_to_png_scale: Float?
 
-    var user_position: CGPoint = CGPoint(x: 100, y: 100)
+    /*
+     * real_life = png * real_life_to_png_scale
+     *
+     * png = phone * png_to_phone_scale
+     *
+     * real_life = phone * real_life_to_png_scale * png_to_phone_scale
+     *
+     * Default to 1 so we don't have to unwrap it every time
+     */
+    var real_life_to_png_scale: CGFloat = 0.9163987138263665
+    // var real_life_to_png_scale: CGFloat = 1.0
+    var png_to_phone_scale_y: CGFloat   = 1.0
+    var png_to_phone_scale_x: CGFloat   = 1.0
+
+    var user_position: CGPoint = CGPoint(x: 0.0, y: 0.0)
     var user_heading:  Float   = 0.0
     
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Initialization
+
     func init_geometry()
     {
-        guard let imageView = self.mapImage, let image = imageView.image, let superview = imageView.superview else {
+        guard let imageView = self.mapImage, let image = imageView.image else {
             print("No image found")
             return
         }
@@ -195,16 +211,9 @@ class GuidingLiteViewController: UIViewController
         let imageViewSize = imageView.bounds.size
         let imageSize = image.size
 
-        print("Image size: \(imageSize), scale: \(image.scale)")
-        print("Image view size: \(imageViewSize), center = \(imageView.center)")
+        self.png_to_phone_scale_x = imageViewSize.width / imageSize.width
+        self.png_to_phone_scale_y = imageViewSize.height / imageSize.height
 
-        print("Scale = \(imageView.contentScaleFactor), bounds = \(imageView.bounds), frame = \(imageView.frame)")
-
-        // let w_scale = imageViewSize.width / imageSize.width
-        // let h_scale = imageViewSize.height / imageSize.height
-
-        // let w = imageSize.width * w_scale
-        // let h = imageSize.height * h_scale
 
         let w = imageView.frame.size.width
         let h = imageView.frame.size.height
@@ -214,11 +223,39 @@ class GuidingLiteViewController: UIViewController
         self.mapTopRight    = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y)
         self.mapBottomRight = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y + h)
 
-        print("Map borders: top left = \(mapTopLeft!), top right = \(mapTopRight!), bottom left = \(mapBottomLeft!), bottom right = \(mapBottomRight!)")
+        print("Map borders: top left = \(mapTopLeft), top right = \(mapTopRight), bottom left = \(mapBottomLeft), bottom right = \(mapBottomRight)")
+    }
 
+    func showIPAddressInputDialog()
+    {
+        self.first_time_mqtt_init = false
 
-        // self.userArrowImage.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
-        // self.locationPinImage.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
+        let alertController = UIAlertController(title: "Enter IP Address", message: nil, preferredStyle: .alert)
+
+        alertController.addTextField { (textField) in
+            textField.placeholder = "IP Address"
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] (_) in
+            if let ipAddress = alertController.textFields?.first?.text {
+                // Unwrap self
+                guard let strongSelf = self else {
+                    return
+                }
+
+                strongSelf.mqtt_handler.connect_callback = strongSelf.mqtt_connect_callback
+
+                strongSelf.mqtt_client.initialize(ipAddress)
+                strongSelf.mqtt_client.set_handler(strongSelf.mqtt_handler)
+                strongSelf.mqtt_client.connect()
+            }
+        }
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(okAction)
+
+        present(alertController, animated: true, completion: nil)
     }
 
     override func viewDidLoad()
@@ -280,62 +317,15 @@ class GuidingLiteViewController: UIViewController
     {
         self.haptics_controller = GuidingLight_HapticsController()
     }
+    /////////////////////////////////////////////////////////////////////////////////////
 
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Repeated Timers
     @objc func ui_timer()
     {
         self.updateUserArrowPos(pos: self.user_position)
         self.updateDirectionArrow(angle: self.user_heading)
-    }
-
-    func mqtt_connect_callback()
-    {
-        // Start mqtt timers after connection
-
-        // GuidingLite: heartbeat timer
-        _ = Timer.scheduledTimer( timeInterval: 10,
-                                  target: self,
-                                  selector: #selector(self.mqtt_heartbeat_timer),
-                                  userInfo: nil,
-                                  repeats: true )
-
-        // Telemetry timer
-        _ = Timer.scheduledTimer( timeInterval: 1/10,   // 10Hz
-                                  target: self,
-                                  selector: #selector(self.telemetry_timer),
-                                  userInfo: nil,
-                                  repeats: true )
-    }
-
-    func mqtt_metadata_msg_callback(metadata: [String: Any])
-    {
-        // print("Received metadata: \(metadata)")
-        // print("scale = \(metadata["real_life_to_floorplan_png_scale"])")
-        self.real_life_to_png_scale = metadata["real_life_to_floorplan_png_scale"] as? Float
-    }
-
-    func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
-    {
-        if self.real_life_to_png_scale == nil
-        {
-            return
-        }
-
-        // print("Received position: x = \(x), y = \(y), heading = \(heading)")
-
-        let png_x = x / self.real_life_to_png_scale!
-        let png_y = y / self.real_life_to_png_scale!
-
-        let point = CGPoint(x: CGFloat(png_x), y: CGFloat(png_y))
-
-        self.updateUserArrowPos(pos: point)
-    }
-
-    @objc func mqtt_heartbeat_timer()
-    {
-        DispatchQueue.global(qos: .default).async
-        {
-            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
-        }
     }
 
     @objc func telemetry_timer()
@@ -365,46 +355,78 @@ class GuidingLiteViewController: UIViewController
             // print("Telemetry for anchor \(aid): \(anchor_data)")
         }
     }
-    
-    func showIPAddressInputDialog()
+
+    @objc func mqtt_heartbeat_timer()
     {
-        self.first_time_mqtt_init = false
-
-        let alertController = UIAlertController(title: "Enter IP Address", message: nil, preferredStyle: .alert)
-
-        alertController.addTextField { (textField) in
-            textField.placeholder = "IP Address"
+        DispatchQueue.global(qos: .default).async
+        {
+            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
         }
-
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] (_) in
-            if let ipAddress = alertController.textFields?.first?.text {
-                // Unwrap self
-                guard let strongSelf = self else {
-                    return
-                }
-
-                strongSelf.mqtt_handler.connect_callback = strongSelf.mqtt_connect_callback
-
-                strongSelf.mqtt_client.initialize(ipAddress)
-                strongSelf.mqtt_client.set_handler(strongSelf.mqtt_handler)
-                strongSelf.mqtt_client.connect()
-            }
-        }
-
-        alertController.addAction(cancelAction)
-        alertController.addAction(okAction)
-
-        present(alertController, animated: true, completion: nil)
     }
+    /////////////////////////////////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // MQTT Callbacks
+    func mqtt_connect_callback()
+    {
+        // Start mqtt timers after connection
+
+        // GuidingLite: heartbeat timer
+        _ = Timer.scheduledTimer( timeInterval: 10,
+                                  target: self,
+                                  selector: #selector(self.mqtt_heartbeat_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+
+        // Telemetry timer
+        _ = Timer.scheduledTimer( timeInterval: 1/10,   // 10Hz
+                                  target: self,
+                                  selector: #selector(self.telemetry_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+    }
+
+    func mqtt_metadata_msg_callback(metadata: [String: Any])
+    {
+        // print("Received metadata: \(metadata)")
+        // print("scale = \(metadata["real_life_to_floorplan_png_scale"])")
+        self.real_life_to_png_scale = metadata["real_life_to_floorplan_png_scale"] as! CGFloat
+    }
+
+    func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
+    {
+        // print("Received position: x = \(x), y = \(y), heading = \(heading)")
+
+        // let png_x = x / self.real_life_to_png_scale!
+        // let png_y = y / self.real_life_to_png_scale!
+        let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
+
+        self.updateUserArrowPos(pos: phone_point)
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+
     
+    /////////////////////////////////////////////////////////////////////////////////////
+    // UI Logic
     @IBAction func goButtonPressed(_ sender: UIButton)
     {
         print("Go Pressed!")
 
         // Add your logic here
-        if(currDestState == S_SET_DEST) {
-            self.send_mqtt_pin_location()
+        if (currDestState == S_SET_DEST)
+        {
+            let real_life_point = self.phone_to_real_life( self.pinLocation )
+
+
+            let dict = ["endpoint": [real_life_point.x, real_life_point.y, 0]]
+            let json = serializeJSON(dict)
+
+            DispatchQueue.global(qos: .default).async
+            {
+                self.mqtt_client.publish( PATHFINDING_CONFIG_TOPIC, json! )
+            }
+
             currDestState = S_GO
         }
     }
@@ -422,20 +444,6 @@ class GuidingLiteViewController: UIViewController
         // Add your logic here
         currDestState = S_INIT
         locationPinImage.isHidden = true
-    }
-    
-    func send_mqtt_pin_location()
-    {
-        let x = pinLocation.x
-        let y = pinLocation.y
-
-        let dict = ["endpoint": [x, y, 0]]
-        let json = serializeJSON(dict)
-
-        DispatchQueue.global(qos: .default).async
-        {
-            self.mqtt_client.publish( PATHFINDING_CONFIG_TOPIC, json! )
-        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -462,7 +470,7 @@ class GuidingLiteViewController: UIViewController
         {
             // Only update pinLocation when setting a new destination
             pinLocation = touch.location(in: self.view)
-            print("Live update - Touch coordinates: x = \(pinLocation.x), y = \(pinLocation.y)")
+            // print("Live update - Touch coordinates: x = \(pinLocation.x), y = \(pinLocation.y)")
 
             if ( self.isPointInMap(pos: pinLocation) )
             {
@@ -484,26 +492,26 @@ class GuidingLiteViewController: UIViewController
 
     func updateUserArrowPos(pos: CGPoint)
     {
-        var scaled_coord = CGPoint(x: (mapBottomLeft!.x + pos.x), y: (mapBottomLeft!.y - pos.y))
+        var scaled_coord = CGPoint(x: (mapBottomLeft.x + pos.x), y: (mapBottomLeft.y - pos.y))
         
         // Before updating the position coordinate, make sure that this point does not exceed
         // the map bounds.
-        if (scaled_coord.x >= mapTopRight!.x)
+        if (scaled_coord.x >= mapTopRight.x)
         {
-            scaled_coord.x = mapTopRight!.x
+            scaled_coord.x = mapTopRight.x
         }
-        else if (scaled_coord.x <= mapTopLeft!.x)
+        else if (scaled_coord.x <= mapTopLeft.x)
         {
-            scaled_coord.x = mapTopLeft!.x
+            scaled_coord.x = mapTopLeft.x
         }
         
-        if (scaled_coord.y >= mapBottomRight!.y)
+        if (scaled_coord.y >= mapBottomRight.y)
         {
-            scaled_coord.y = mapBottomRight!.y
+            scaled_coord.y = mapBottomRight.y
         }
-        else if(scaled_coord.y <= mapTopRight!.y)
+        else if(scaled_coord.y <= mapTopRight.y)
         {
-            scaled_coord.y = mapTopRight!.y
+            scaled_coord.y = mapTopRight.y
         }
         
         let halfWidth = userArrowImage.frame.size.width / 2.0
@@ -529,15 +537,36 @@ class GuidingLiteViewController: UIViewController
         let x = pos.x
         let y = pos.y
         
-        if((x >= mapTopLeft!.x) && (x <= mapTopRight!.x) && (y >= mapTopLeft!.y) && (y <= mapBottomLeft!.y)) {
+        if((x >= mapTopLeft.x) && (x <= mapTopRight.x) && (y >= mapTopLeft.y) && (y <= mapBottomLeft.y)) {
             return true
         }
         return false
     }
     
+    func phone_to_real_life(_ phone_point: CGPoint) -> CGPoint
+    {
+        let real_phone_point = CGPoint( x: phone_point.x - self.mapBottomLeft.x,
+                                        y: self.mapBottomLeft.y - phone_point.y )
+
+        let ret = CGPoint( x: real_phone_point.x * self.png_to_phone_scale_x * self.real_life_to_png_scale,
+                           y: real_phone_point.y * self.png_to_phone_scale_y * self.real_life_to_png_scale )
+
+        print("Phone to real life: \(phone_point) -> \(ret)")
+
+        return ret
+    }
+
+    func real_life_to_phone(_ real_life_point: CGPoint) -> CGPoint
+    {
+        let ret = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
+                           y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
+        return ret
+    }
+
     // Returns the current position of the user arrow relative to the map area.
     func getUserArrowPos() -> CGPoint
     {
         return CGPoint(x: 0, y: 0)
     }
+    /////////////////////////////////////////////////////////////////////////////////////
 }
