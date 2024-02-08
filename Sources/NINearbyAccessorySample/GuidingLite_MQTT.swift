@@ -101,8 +101,8 @@ class MQTTClient {
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     var direction       = ""
-    var userPosition    = CGPoint(x: 0, y: 0)
-    var arrowAngle      = Float(0.0)
+    // var userPosition    = CGPoint(x: 0, y: 0)
+    // var arrowAngle      = Float(0.0)
 
     ////////////////////////////////////////////////////////////////////////
     // Callbacks

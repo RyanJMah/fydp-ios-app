@@ -144,6 +144,8 @@ class GuidingLiteViewController: UIViewController
 
     @IBOutlet weak var arView: ARView!
 
+    @IBOutlet weak var mapImage: UIImageView!
+
     let S_INIT = 0
     let S_SET_DEST = 1
     let S_GO = 2
@@ -158,10 +160,19 @@ class GuidingLiteViewController: UIViewController
     var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
     
     // Map borders
-    let mapTopLeft          = CGPoint(x: 10,    y: 375)
-    let mapTopRight         = CGPoint(x: 359,   y: 375)
-    let mapBottomLeft       = CGPoint(x: 10,    y: 736)
-    let mapBottomRight      = CGPoint(x: 359,   y: 736)
+    var mapTopLeft:     CGPoint? = nil
+    var mapTopRight:    CGPoint? = nil
+    var mapBottomLeft:  CGPoint? = nil
+    var mapBottomRight: CGPoint? = nil
+
+    var map_width:  Float? = nil
+    var map_height: Float? = nil
+
+
+    // let mapTopLeft          = CGPoint(x: 10,    y: 375)
+    // let mapTopRight         = CGPoint(x: 359,   y: 375)
+    // let mapBottomLeft       = CGPoint(x: 10,    y: 736)
+    // let mapBottomRight      = CGPoint(x: 359,   y: 736)
     
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
@@ -170,10 +181,52 @@ class GuidingLiteViewController: UIViewController
     var haptics_controller: GuidingLight_HapticsController?
 
     var real_life_to_png_scale: Float?
+
+    var user_position: CGPoint = CGPoint(x: 100, y: 100)
+    var user_heading:  Float   = 0.0
     
+    func init_geometry()
+    {
+        guard let imageView = self.mapImage, let image = imageView.image, let superview = imageView.superview else {
+            print("No image found")
+            return
+        }
+
+        let imageViewSize = imageView.bounds.size
+        let imageSize = image.size
+
+        print("Image size: \(imageSize), scale: \(image.scale)")
+        print("Image view size: \(imageViewSize), center = \(imageView.center)")
+
+        print("Scale = \(imageView.contentScaleFactor), bounds = \(imageView.bounds), frame = \(imageView.frame)")
+
+        // let w_scale = imageViewSize.width / imageSize.width
+        // let h_scale = imageViewSize.height / imageSize.height
+
+        // let w = imageSize.width * w_scale
+        // let h = imageSize.height * h_scale
+
+        let w = imageView.frame.size.width
+        let h = imageView.frame.size.height
+        
+        self.mapTopLeft     = imageView.frame.origin
+        self.mapBottomLeft  = CGPoint(x: imageView.frame.origin.x, y: imageView.frame.origin.y + h)
+        self.mapTopRight    = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y)
+        self.mapBottomRight = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y + h)
+
+        print("Map borders: top left = \(mapTopLeft!), top right = \(mapTopRight!), bottom left = \(mapBottomLeft!), bottom right = \(mapBottomRight!)")
+
+
+        // self.userArrowImage.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
+        // self.locationPinImage.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
+    }
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
+
+        self.init_geometry()
+
 
         locationPinImage.isHidden = true
 
@@ -230,8 +283,8 @@ class GuidingLiteViewController: UIViewController
 
     @objc func ui_timer()
     {
-        self.updateUserArrowPos(pos: mqtt_handler.userPosition)
-        self.updateDirectionArrow(angle: mqtt_handler.arrowAngle)
+        self.updateUserArrowPos(pos: self.user_position)
+        self.updateDirectionArrow(angle: self.user_heading)
     }
 
     func mqtt_connect_callback()
@@ -431,35 +484,44 @@ class GuidingLiteViewController: UIViewController
 
     func updateUserArrowPos(pos: CGPoint)
     {
-        var scaled_coord = CGPoint(x: (mapBottomLeft.x + pos.x), y: (mapBottomLeft.y - pos.y))
+        var scaled_coord = CGPoint(x: (mapBottomLeft!.x + pos.x), y: (mapBottomLeft!.y - pos.y))
         
         // Before updating the position coordinate, make sure that this point does not exceed
         // the map bounds.
-        if (scaled_coord.x >= mapTopRight.x)
+        if (scaled_coord.x >= mapTopRight!.x)
         {
-            scaled_coord.x = mapTopRight.x
+            scaled_coord.x = mapTopRight!.x
         }
-        else if (scaled_coord.x <= mapTopLeft.x)
+        else if (scaled_coord.x <= mapTopLeft!.x)
         {
-            scaled_coord.x = mapTopLeft.x
-        }
-        
-        if (scaled_coord.y >= mapBottomRight.y)
-        {
-            scaled_coord.y = mapBottomRight.y
-        }
-        else if(scaled_coord.y <= mapTopRight.y)
-        {
-            scaled_coord.y = mapTopRight.y
+            scaled_coord.x = mapTopLeft!.x
         }
         
+        if (scaled_coord.y >= mapBottomRight!.y)
+        {
+            scaled_coord.y = mapBottomRight!.y
+        }
+        else if(scaled_coord.y <= mapTopRight!.y)
+        {
+            scaled_coord.y = mapTopRight!.y
+        }
         
+        let halfWidth = userArrowImage.frame.size.width / 2.0
+        let halfHeight = userArrowImage.frame.size.height / 2.0
+        
+        scaled_coord.x -= halfWidth
+        scaled_coord.y -= halfHeight
+
         userArrowImage.frame.origin = scaled_coord
     }
 
     func updateLocationPinImage(pos: CGPoint)
     {
-        locationPinImage.frame.origin = pos
+        let adjustedPos = CGPoint( x: pos.x - locationPinImage.frame.size.width / 2,
+                                   y: pos.y - locationPinImage.frame.size.height )
+
+        locationPinImage.frame.origin = adjustedPos
+        // locationPinImage.frame.origin = pos
     }
 
     func isPointInMap(pos: CGPoint) -> Bool
@@ -467,7 +529,7 @@ class GuidingLiteViewController: UIViewController
         let x = pos.x
         let y = pos.y
         
-        if((x >= mapTopLeft.x) && (x <= mapTopRight.x) && (y >= mapTopLeft.y) && (y <= mapBottomLeft.y)) {
+        if((x >= mapTopLeft!.x) && (x <= mapTopRight!.x) && (y >= mapTopLeft!.y) && (y <= mapBottomLeft!.y)) {
             return true
         }
         return false
@@ -478,14 +540,4 @@ class GuidingLiteViewController: UIViewController
     {
         return CGPoint(x: 0, y: 0)
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 }
