@@ -12,12 +12,15 @@ import CocoaMQTT
 let USER_ID = 69
 
 let HEARTBEAT_TOPIC     = "gl/user/\(USER_ID)/heartbeat"
-let PATHING_TOPIC       = "gl/user/\(USER_ID)/pathing"
 let DATA_TOPIC_BASE     = "gl/user/\(USER_ID)/data/"
-let HEADING_TOPIC       = "gl/user/\(USER_ID)/data/heading"
-let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
-let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
-let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
+
+// let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
+// let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
+// let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
+
+let PATHING_TOPIC       = "gl/user/\(USER_ID)/path"
+let HEADING_TOPIC       = "gl/user/\(USER_ID)/target_heading"
+let POSITION_TOPIC      = "gl/user/\(USER_ID)/position"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
@@ -99,14 +102,28 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
 
     var connect_callback: (() -> Void)? = nil
 
+    // 
+    var pathing_callback: ((String) -> Void)? = nil
+
+    // Takes in x, y, heading
+    var position_callback: ((Float, Float, Float) -> Void)? = nil
+
+    // Takes in Target heading
+    var target_heading_callback: ((Float) -> Void)? = nil
+
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
-        mqtt.subscribe("gl/user/\(USER_ID)/pathing")
-        mqtt.subscribe(USER_COORD_TOPIC)
-        mqtt.subscribe(DEST_COORD_TOPIC)
-        mqtt.subscribe(ARROW_ANGLE_TOPIC)
+
+        mqtt.subscribe(PATHING_TOPIC)
+        mqtt.subscribe(HEADING_TOPIC)
+        mqtt.subscribe(POSITION_TOPIC)
+
+        // mqtt.subscribe("gl/user/\(USER_ID)/pathing")
+        // mqtt.subscribe(USER_COORD_TOPIC)
+        // mqtt.subscribe(DEST_COORD_TOPIC)
+        // mqtt.subscribe(ARROW_ANGLE_TOPIC)
 
         if let callback = connect_callback
         {
@@ -129,55 +146,91 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     ///
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
-        let subtopics = message.topic.components(separatedBy: "/")
-        print("msg: \(message.topic)")
-        
-        if (subtopics[3] == "pathing")
+        // print("msg: \(message.topic), \(message.string)")
+
+        switch message.topic
         {
-            let jsonString = message.string
-            
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                direction = decodedDictionary["direction"] as! String
-                print("Direction: \(decodedDictionary["direction"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
+            case PATHING_TOPIC:
+                break
+                // if let callback = pathing_callback
+                // {
+                //     callback(message.string)
+                // }
+
+            case HEADING_TOPIC:
+                break
+                // if let callback = target_heading_callback
+                // {
+                //     let jsonString = message.string
+                //     if let decodedDictionary = decodeJSONString(jsonString!)
+                //     {
+                //         callback(decodedDictionary["angle"] as! Float)
+                //     }
+                // }
+
+            case POSITION_TOPIC:
+                if let callback = position_callback
+                {
+                    if let decodedDict = decodeJSONString(message.string!)
+                    {
+                        // print(decodedDictionary)
+                        callback( decodedDict["x"] as! Float,
+                                 decodedDict["y"] as! Float,
+                                 decodedDict["heading"] as! Float )
+                    }
+                }
+
+            default:
+                break
         }
+
+
+        // if (subtopics[3] == "path")
+        // {
+        //     // let jsonString = message.string
+            
+        //     // if let decodedDictionary = decodeJSONString(jsonString!)
+        //     // {
+        //     //     direction = decodedDictionary["direction"] as! String
+        //     //     print("Direction: \(decodedDictionary["direction"]!)")
+        //     // }
+        //     // else
+        //     // {
+        //     //     print("Failed to decode JSON string.")
+        //     // }
+        // }
         
-        if (message.topic == USER_COORD_TOPIC)
-        {
-            let jsonString = message.string
+        // if (message.topic == USER_COORD_TOPIC)
+        // {
+        //     let jsonString = message.string
             
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                userPosition.x = decodedDictionary["x"] as! CGFloat
-                print("user_x: \(decodedDictionary["x"]!)")
-                userPosition.y = decodedDictionary["y"] as! CGFloat
-                print("user_y: \(decodedDictionary["y"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
-        }
+        //     if let decodedDictionary = decodeJSONString(jsonString!)
+        //     {
+        //         userPosition.x = decodedDictionary["x"] as! CGFloat
+        //         print("user_x: \(decodedDictionary["x"]!)")
+        //         userPosition.y = decodedDictionary["y"] as! CGFloat
+        //         print("user_y: \(decodedDictionary["y"]!)")
+        //     }
+        //     else
+        //     {
+        //         print("Failed to decode JSON string.")
+        //     }
+        // }
         
-        if (message.topic == ARROW_ANGLE_TOPIC)
-        {
-            let jsonString = message.string
+        // if (message.topic == ARROW_ANGLE_TOPIC)
+        // {
+        //     let jsonString = message.string
             
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                arrowAngle = decodedDictionary["angle"] as! Float
-                print("arrow_angle: \(decodedDictionary["angle"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
-        }
+        //     if let decodedDictionary = decodeJSONString(jsonString!)
+        //     {
+        //         arrowAngle = decodedDictionary["angle"] as! Float
+        //         print("arrow_angle: \(decodedDictionary["angle"]!)")
+        //     }
+        //     else
+        //     {
+        //         print("Failed to decode JSON string.")
+        //     }
+        // }
     }
     
     ///

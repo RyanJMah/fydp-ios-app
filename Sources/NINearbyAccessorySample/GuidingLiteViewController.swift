@@ -157,6 +157,9 @@ class GuidingLiteViewController: UIViewController
 
         locationPinImage.isHidden = true
 
+        self.mqtt_handler.connect_callback  = self.mqtt_connect_callback
+        self.mqtt_handler.position_callback = self.mqtt_position_msg_callback
+
         // Main UI timer, 200ms
         _ = Timer.scheduledTimer( timeInterval: 0.2,
                                   target: self,
@@ -186,12 +189,12 @@ class GuidingLiteViewController: UIViewController
 
     @objc func expensive_initialization()
     {
-        self.showIPAddressInputDialog()
+        // self.showIPAddressInputDialog()
 
-        // self.mqtt_handler.connect_callback = self.mqtt_connect_callback
+        self.mqtt_client.initialize("192.168.1.121")
         // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
-        // self.mqtt_client.set_handler(self.mqtt_handler)
-        // self.mqtt_client.connect()
+        self.mqtt_client.set_handler(self.mqtt_handler)
+        self.mqtt_client.connect()
 
         g_uwb_manager = GuidingLite_UWBManager(arView: self.arView)
 
@@ -204,7 +207,13 @@ class GuidingLiteViewController: UIViewController
         self.haptics_controller = GuidingLight_HapticsController()
     }
 
-    @objc func mqtt_connect_callback()
+    @objc func ui_timer()
+    {
+        self.updateUserArrowPos(pos: mqtt_handler.userPosition)
+        self.updateDirectionArrow(angle: mqtt_handler.arrowAngle)
+    }
+
+    func mqtt_connect_callback()
     {
         // Start mqtt timers after connection
 
@@ -223,11 +232,9 @@ class GuidingLiteViewController: UIViewController
                                   repeats: true )
     }
 
-
-    @objc func ui_timer()
+    func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
-        self.updateUserArrowPos(pos: mqtt_handler.userPosition)
-        self.updateDirectionArrow(angle: mqtt_handler.arrowAngle)
+        print("Received position: x = \(x), y = \(y), heading = \(heading)")
     }
 
     @objc func mqtt_heartbeat_timer()
@@ -266,11 +273,6 @@ class GuidingLiteViewController: UIViewController
         }
     }
     
-    func anchor_discovered_handler(index: Int)
-    {
-        print("Anchor discovered!")
-    }
-
     func showIPAddressInputDialog()
     {
         self.first_time_mqtt_init = false
@@ -335,7 +337,7 @@ class GuidingLiteViewController: UIViewController
         let y = pinLocation.y
         DispatchQueue.global(qos: .default).async
         {
-            self.mqtt_client.publish( DEST_COORD_TOPIC, "{x: \(x), y: \(y)}" )
+            // self.mqtt_client.publish( DEST_COORD_TOPIC, "{x: \(x), y: \(y)}" )
         }
     }
     
