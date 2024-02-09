@@ -773,9 +773,10 @@
                                 <rect key="frame" x="10" y="-1298" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="5RV-Ki-pcj">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="5RV-Ki-pcj">
                                 <rect key="frame" x="10" y="357" width="374" height="428"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="locationPin" translatesAutoresizingMaskIntoConstraints="NO" id="ZiA-Yv-V7Q">
                                 <rect key="frame" x="189" y="464" width="36" height="44"/>
@@ -846,6 +847,7 @@
                         <outlet property="goDestButton" destination="DJJ-Lm-xQ8" id="G4N-bx-MzF"/>
                         <outlet property="guidingLiteSettingsButton" destination="FPo-Yu-Dkw" id="qEl-Hd-2BX"/>
                         <outlet property="locationPinImage" destination="ZiA-Yv-V7Q" id="ZRu-vV-VAm"/>
+                        <outlet property="mapImage" destination="5RV-Ki-pcj" id="51i-7i-lgw"/>
                         <outlet property="setDestButton" destination="zwC-19-Bun" id="0VV-lZ-Uuo"/>
                         <outlet property="userArrowImage" destination="2Na-un-mO8" id="WGv-bg-0Kg"/>
                     </connections>
@@ -918,8 +920,8 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Connected" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OX5-xa-IeQ" userLabel="Settings Label">
-                                <rect key="frame" x="117" y="233" width="95" height="19"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OX5-xa-IeQ" userLabel="Settings Label">
+                                <rect key="frame" x="117" y="233" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="62" id="Kdh-3Z-fpw"/>
                                     <constraint firstAttribute="height" constant="19" id="Zh8-TN-iae"/>
@@ -928,8 +930,8 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="False" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="inu-A2-gbV" userLabel="Settings Label">
-                                <rect key="frame" x="117" y="274" width="95" height="19"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="False" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="inu-A2-gbV" userLabel="Settings Label">
+                                <rect key="frame" x="117" y="274" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="62" id="rAS-Ra-cF6"/>
                                     <constraint firstAttribute="height" constant="19" id="wOb-pZ-YUG"/>
@@ -939,7 +941,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="False" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f7R-34-kgr" userLabel="Settings Label">
-                                <rect key="frame" x="117" y="309" width="95" height="19"/>
+                                <rect key="frame" x="117" y="309" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="0yH-T4-eyh"/>
                                     <constraint firstAttribute="width" constant="62" id="KdQ-Nd-74E"/>
@@ -949,10 +951,90 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="False" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhH-9I-hz7" userLabel="Settings Label">
-                                <rect key="frame" x="117" y="344" width="95" height="19"/>
+                                <rect key="frame" x="117" y="344" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="9y4-eB-W7J"/>
                                     <constraint firstAttribute="width" constant="62" id="fXj-lL-O4E"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Angle" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ver-ri-IvU" userLabel="Settings Label">
+                                <rect key="frame" x="187" y="233" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="62" id="827-2b-mdh"/>
+                                    <constraint firstAttribute="height" constant="19" id="MAT-hd-Mh4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kbf-MV-Pfc" userLabel="Settings Label">
+                                <rect key="frame" x="187" y="274" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="19" id="6Ij-V0-Vf8"/>
+                                    <constraint firstAttribute="width" constant="62" id="NAx-kw-xP3"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tuw-xY-ReF" userLabel="Settings Label">
+                                <rect key="frame" x="187" y="309" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="62" id="Fj6-kO-Obb"/>
+                                    <constraint firstAttribute="height" constant="19" id="yRT-CH-J9Y"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s3I-nJ-EhS" userLabel="Settings Label">
+                                <rect key="frame" x="187" y="344" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="19" id="2bO-15-kh5"/>
+                                    <constraint firstAttribute="width" constant="62" id="FHr-qy-8f7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dist" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lix-6L-lCV" userLabel="Settings Label">
+                                <rect key="frame" x="257" y="233" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="62" id="7v0-J5-snj"/>
+                                    <constraint firstAttribute="height" constant="19" id="adC-OK-KJx"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hka-Ea-DaJ" userLabel="Settings Label">
+                                <rect key="frame" x="257" y="274" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="19" id="GmM-ib-8gU"/>
+                                    <constraint firstAttribute="width" constant="62" id="cjN-vZ-DUE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="STo-eF-4xz" userLabel="Settings Label">
+                                <rect key="frame" x="257" y="309" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="62" id="UN9-eB-tGQ"/>
+                                    <constraint firstAttribute="height" constant="19" id="l6h-xX-pjE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXs-X4-t0O" userLabel="Settings Label">
+                                <rect key="frame" x="257" y="344" width="62" height="19"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="62" id="892-ew-SM5"/>
+                                    <constraint firstAttribute="height" constant="19" id="Z3t-Mx-fij"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -969,7 +1051,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="False" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kWu-uq-fWx" userLabel="Settings Label">
-                                <rect key="frame" x="117" y="380" width="95" height="19"/>
+                                <rect key="frame" x="117" y="380" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="62" id="S9B-GT-iEX"/>
                                     <constraint firstAttribute="height" constant="19" id="XQq-gH-Hhg"/>
@@ -978,88 +1060,8 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Angle" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ver-ri-IvU" userLabel="Settings Label">
-                                <rect key="frame" x="241" y="233" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="827-2b-mdh"/>
-                                    <constraint firstAttribute="height" constant="19" id="MAT-hd-Mh4"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kbf-MV-Pfc" userLabel="Settings Label">
-                                <rect key="frame" x="241" y="274" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="19" id="6Ij-V0-Vf8"/>
-                                    <constraint firstAttribute="width" constant="62" id="NAx-kw-xP3"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tuw-xY-ReF" userLabel="Settings Label">
-                                <rect key="frame" x="241" y="309" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="Fj6-kO-Obb"/>
-                                    <constraint firstAttribute="height" constant="19" id="yRT-CH-J9Y"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s3I-nJ-EhS" userLabel="Settings Label">
-                                <rect key="frame" x="241" y="344" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="19" id="2bO-15-kh5"/>
-                                    <constraint firstAttribute="width" constant="62" id="FHr-qy-8f7"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Dist" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lix-6L-lCV" userLabel="Settings Label">
-                                <rect key="frame" x="311" y="233" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="7v0-J5-snj"/>
-                                    <constraint firstAttribute="height" constant="19" id="adC-OK-KJx"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hka-Ea-DaJ" userLabel="Settings Label">
-                                <rect key="frame" x="311" y="274" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="19" id="GmM-ib-8gU"/>
-                                    <constraint firstAttribute="width" constant="62" id="cjN-vZ-DUE"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="STo-eF-4xz" userLabel="Settings Label">
-                                <rect key="frame" x="311" y="309" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="UN9-eB-tGQ"/>
-                                    <constraint firstAttribute="height" constant="19" id="l6h-xX-pjE"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXs-X4-t0O" userLabel="Settings Label">
-                                <rect key="frame" x="311" y="344" width="62" height="19"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="892-ew-SM5"/>
-                                    <constraint firstAttribute="height" constant="19" id="Z3t-Mx-fij"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="DINNextLTPro-Medium" family="DIN Next LT Pro" pointSize="17"/>
-                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3XQ-lZ-s4g" userLabel="Settings Label">
-                                <rect key="frame" x="241" y="380" width="62" height="19"/>
+                                <rect key="frame" x="187" y="380" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="62" id="rXE-I8-op5"/>
                                     <constraint firstAttribute="height" constant="19" id="xWo-dq-Gfr"/>
@@ -1069,7 +1071,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3eC-4V-vs0" userLabel="Settings Label">
-                                <rect key="frame" x="311" y="380" width="62" height="19"/>
+                                <rect key="frame" x="257" y="380" width="62" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="SzU-I0-lJW"/>
                                     <constraint firstAttribute="width" constant="62" id="Tum-bA-93n"/>
@@ -1144,7 +1146,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dYs-D0-xtX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2562.3188405797105" y="-1029.2410714285713"/>
+            <point key="canvasLocation" x="2565" y="-1029"/>
         </scene>
     </scenes>
     <resources>

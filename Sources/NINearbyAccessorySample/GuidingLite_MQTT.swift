@@ -11,13 +11,20 @@ import CocoaMQTT
 
 let USER_ID = 69
 
-let HEARTBEAT_TOPIC     = "gl/user/\(USER_ID)/heartbeat"
-let PATHING_TOPIC       = "gl/user/\(USER_ID)/pathing"
-let DATA_TOPIC_BASE     = "gl/user/\(USER_ID)/data/"
-let HEADING_TOPIC       = "gl/user/\(USER_ID)/data/heading"
-let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
-let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
-let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
+let HEARTBEAT_TOPIC    = "gl/user/\(USER_ID)/heartbeat"
+let DATA_TOPIC_BASE    = "gl/user/\(USER_ID)/data/"
+let HEADING_DATA_TOPIC = "gl/user/\(USER_ID)/data/heading"
+
+// let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
+// let DEST_COORD_TOPIC    = "gl/user/\(USER_ID)/destination_coordinates"
+// let ARROW_ANGLE_TOPIC   = "gl/user/\(USER_ID)/arrow_angle"
+
+let METADATA_TOPIC           = "gl/server/metadata"
+let PATHFINDING_CONFIG_TOPIC = "gl/server/pathfinding/config"
+
+let PATHING_TOPIC  = "gl/user/\(USER_ID)/path"
+let HEADING_TOPIC  = "gl/user/\(USER_ID)/target_heading"
+let POSITION_TOPIC = "gl/user/\(USER_ID)/position"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
@@ -94,19 +101,40 @@ class MQTTClient {
 
 class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     var direction       = ""
-    var userPosition    = CGPoint(x: 0, y: 0)
-    var arrowAngle      = Float(0.0)
+    // var userPosition    = CGPoint(x: 0, y: 0)
+    // var arrowAngle      = Float(0.0)
+
+    ////////////////////////////////////////////////////////////////////////
+    // Callbacks
 
     var connect_callback: (() -> Void)? = nil
+
+    var pathing_callback: ((String) -> Void)? = nil
+
+    // Takes in x, y, heading
+    var position_callback: ((Float, Float, Float) -> Void)? = nil
+
+    var target_heading_callback: ((Float) -> Void)? = nil
+
+    // Takes in dictionary of metadata
+    var metadata_callback: ( ([String: Any]) -> Void )? = nil
+    ////////////////////////////////////////////////////////////////////////
 
     ///
     func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck)
     {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
-        mqtt.subscribe("gl/user/\(USER_ID)/pathing")
-        mqtt.subscribe(USER_COORD_TOPIC)
-        mqtt.subscribe(DEST_COORD_TOPIC)
-        mqtt.subscribe(ARROW_ANGLE_TOPIC)
+
+        mqtt.subscribe(PATHING_TOPIC)
+        mqtt.subscribe(HEADING_TOPIC)
+        mqtt.subscribe(POSITION_TOPIC)
+
+        mqtt.subscribe(METADATA_TOPIC)
+
+        // mqtt.subscribe("gl/user/\(USER_ID)/pathing")
+        // mqtt.subscribe(USER_COORD_TOPIC)
+        // mqtt.subscribe(DEST_COORD_TOPIC)
+        // mqtt.subscribe(ARROW_ANGLE_TOPIC)
 
         if let callback = connect_callback
         {
@@ -129,55 +157,100 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     ///
     func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 )
     {
-        let subtopics = message.topic.components(separatedBy: "/")
-        print("msg: \(message.topic)")
-        
-        if (subtopics[3] == "pathing")
+        // print("msg: \(message.topic), \(message.string)")
+
+        switch message.topic
         {
-            let jsonString = message.string
-            
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                direction = decodedDictionary["direction"] as! String
-                print("Direction: \(decodedDictionary["direction"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
+            case PATHING_TOPIC:
+                break
+                // if let callback = pathing_callback
+                // {
+                //     callback(message.string)
+                // }
+
+            case HEADING_TOPIC:
+                break
+                // if let callback = target_heading_callback
+                // {
+                //     let jsonString = message.string
+                //     if let decodedDictionary = decodeJSON(jsonString!)
+                //     {
+                //         callback(decodedDictionary["angle"] as! Float)
+                //     }
+                // }
+
+            case POSITION_TOPIC:
+                if let callback = position_callback
+                {
+                    if let decodedDict = decodeJSON(message.string!)
+                    {
+                        // print(decodedDictionary)
+                        callback( decodedDict["x"] as! Float,
+                                  decodedDict["y"] as! Float,
+                                  decodedDict["heading"] as! Float )
+                    }
+                }
+
+            case METADATA_TOPIC:
+                if let callback = metadata_callback
+                {
+                    if let decodedDict = decodeJSON(message.string!)
+                    {
+                        callback(decodedDict)
+                    }
+                }
+
+            default:
+                break
         }
+
+
+        // if (subtopics[3] == "path")
+        // {
+        //     // let jsonString = message.string
+            
+        //     // if let decodedDictionary = decodeJSON(jsonString!)
+        //     // {
+        //     //     direction = decodedDictionary["direction"] as! String
+        //     //     print("Direction: \(decodedDictionary["direction"]!)")
+        //     // }
+        //     // else
+        //     // {
+        //     //     print("Failed to decode JSON string.")
+        //     // }
+        // }
         
-        if (message.topic == USER_COORD_TOPIC)
-        {
-            let jsonString = message.string
+        // if (message.topic == USER_COORD_TOPIC)
+        // {
+        //     let jsonString = message.string
             
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                userPosition.x = decodedDictionary["x"] as! CGFloat
-                print("user_x: \(decodedDictionary["x"]!)")
-                userPosition.y = decodedDictionary["y"] as! CGFloat
-                print("user_y: \(decodedDictionary["y"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
-        }
+        //     if let decodedDictionary = decodeJSON(jsonString!)
+        //     {
+        //         userPosition.x = decodedDictionary["x"] as! CGFloat
+        //         print("user_x: \(decodedDictionary["x"]!)")
+        //         userPosition.y = decodedDictionary["y"] as! CGFloat
+        //         print("user_y: \(decodedDictionary["y"]!)")
+        //     }
+        //     else
+        //     {
+        //         print("Failed to decode JSON string.")
+        //     }
+        // }
         
-        if (message.topic == ARROW_ANGLE_TOPIC)
-        {
-            let jsonString = message.string
+        // if (message.topic == ARROW_ANGLE_TOPIC)
+        // {
+        //     let jsonString = message.string
             
-            if let decodedDictionary = decodeJSONString(jsonString!)
-            {
-                arrowAngle = decodedDictionary["angle"] as! Float
-                print("arrow_angle: \(decodedDictionary["angle"]!)")
-            }
-            else
-            {
-                print("Failed to decode JSON string.")
-            }
-        }
+        //     if let decodedDictionary = decodeJSON(jsonString!)
+        //     {
+        //         arrowAngle = decodedDictionary["angle"] as! Float
+        //         print("arrow_angle: \(decodedDictionary["angle"]!)")
+        //     }
+        //     else
+        //     {
+        //         print("Failed to decode JSON string.")
+        //     }
+        // }
     }
     
     ///
