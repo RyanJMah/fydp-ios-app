@@ -195,8 +195,6 @@ class GuidingLiteViewController: UIViewController
     var png_to_phone_scale_y: CGFloat   = 1.0
     var png_to_phone_scale_x: CGFloat   = 1.0
 
-    var user_position: CGPoint = CGPoint(x: 0.0, y: 0.0)
-    var user_heading:  Float   = 0.0
     
     /////////////////////////////////////////////////////////////////////////////////////
     // Initialization
@@ -231,9 +229,10 @@ class GuidingLiteViewController: UIViewController
 
 
         /////////////////////////////////////////////////////////////////////////////////
-        // Rotate the arrow -90 degrees, since it's facing north by default,
-        // we want it using cartesian angles
-        self.rotateUIObject(self.userArrowImage, -90.0)
+        // Initialize arrow rotation
+
+        self.rotateUIObject(self.userArrowImage, 0.0)
+        self.rotateUIObject(self.directionArrowImage, 0.0)
         /////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -328,8 +327,8 @@ class GuidingLiteViewController: UIViewController
     {
         self.haptics_controller = GuidingLight_HapticsController()
 
-        // self.updateDirectionArrow(angle: 90)
-        // self.updateUserArrowDirection(angle: 90)
+        // self.updateDirectionArrow(angle: -90)
+        self.updateUserArrowDirection(angle: 90)
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -413,7 +412,7 @@ class GuidingLiteViewController: UIViewController
         let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
 
-        self.user_position = phone_point
+        // self.user_position = phone_point
 
         self.updateUserArrowPos(pos: phone_point)
     }
@@ -481,7 +480,7 @@ class GuidingLiteViewController: UIViewController
     {
         UIView.animate(withDuration: 0.1) {
             // Convert the angle to radians
-            let radians = angle * .pi / 180.0
+            let radians = (angle - 90) * .pi / 180.0
 
             // Apply the rotation transform, negative because it rotates clockwise by default
             UI_Object.transform = CGAffineTransform(rotationAngle: CGFloat(-1 * radians))
@@ -503,12 +502,14 @@ class GuidingLiteViewController: UIViewController
         }
     }
 
-    // func updateDirectionArrow(angle: Float)
-    // {
-    //     let delta = angle - self.user_heading
+    func updateDirectionArrow(angle: Float)
+    {
+        // let delta = angle - self.direction_arrow_angle
 
-    //     self.rotateUIObject(self.directionArrowImage, delta)
-    // }
+        self.rotateUIObject(self.directionArrowImage, angle)
+
+        // self.direction_arrow_angle = angle
+    }
 
     func updateUserArrowPos(pos: CGPoint)
     {
@@ -530,11 +531,12 @@ class GuidingLiteViewController: UIViewController
 
     func updateUserArrowDirection(angle: Float)
     {
-        let delta = angle - self.user_heading
+        // let delta = angle - self.user_heading
+        // print("User arrow angle: \(angle), user_heading: \(self.user_heading), delta: \(delta)")
 
-        self.rotateUIObject(self.userArrowImage, delta)
+        self.rotateUIObject(self.userArrowImage, angle)
 
-        self.user_heading = angle
+        // self.user_heading = angle
     }
 
     func updateLocationPinImage(pos: CGPoint)
