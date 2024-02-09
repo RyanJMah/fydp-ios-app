@@ -62,6 +62,7 @@ class MQTTClient {
         self.mqtt = CocoaMQTT.init(clientID: clientID, host: ip, port: 1883)
         self.mqtt?.logLevel = .warning
         self.mqtt?.keepAlive = 60
+        self.mqtt?.autoReconnect = true
     }
     
     func set_handler(_ delegate: CocoaMQTTDelegate)
@@ -162,11 +163,14 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         switch message.topic
         {
             case PATHING_TOPIC:
-                break
-                // if let callback = pathing_callback
-                // {
-                //     callback(message.string)
-                // }
+                if let callback = pathing_callback,
+                    let decodedDict = decodeJSON(message.string!),
+                    let path = decodedDict["path"] as? String
+                {
+                    print("Path: \(path)")
+                    // callback(path)
+                }
+
 
             case HEADING_TOPIC:
                 if  let callback = target_heading_callback,
@@ -185,17 +189,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                 {
                     callback(x.floatValue, y.floatValue, heading.floatValue)
                 }
-
-                // if let callback = position_callback
-                // {
-                //     if let decodedDict = decodeJSON(message.string!)
-                //     {
-                //         // print(decodedDictionary)
-                //         callback( decodedDict["x"] as! Float,
-                //                   decodedDict["y"] as! Float,
-                //                   decodedDict["heading"] as! Float )
-                //     }
-                // }
 
             case METADATA_TOPIC:
                 if let callback = metadata_callback
