@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import CocoaMQTT
 
 let USER_ID = 69
@@ -110,7 +111,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
 
     var connect_callback: (() -> Void)? = nil
 
-    var pathing_callback: ((String) -> Void)? = nil
+    var pathing_callback: (( [CGPoint] ) -> Void)? = nil
 
     // Takes in x, y, heading
     var position_callback: ((Float, Float, Float) -> Void)? = nil
@@ -163,12 +164,23 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         switch message.topic
         {
             case PATHING_TOPIC:
-                if let callback = pathing_callback,
+                if  let callback = pathing_callback,
                     let decodedDict = decodeJSON(message.string!),
-                    let path = decodedDict["path"] as? String
+                    let path = decodedDict["val"]
                 {
-                    print("Path: \(path)")
-                    // callback(path)
+                    var
+                    points = [CGPoint]()
+
+                    for point in path as! [[NSNumber]]
+                    {
+                        let x = point[0] as! CGFloat
+                        let y = point[1] as! CGFloat
+
+                        points.append( CGPoint(x: x, y: y) )
+                    }
+
+                    // print("Received path: \(points)")
+                    callback(points)
                 }
 
 
