@@ -168,8 +168,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                     let decodedDict = decodeJSON(message.string!),
                     let path = decodedDict["val"]
                 {
-                    var
-                    points = [CGPoint]()
+                    var points = [CGPoint]()
 
                     for point in path as! [[NSNumber]]
                     {
