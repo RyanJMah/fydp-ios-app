@@ -776,6 +776,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="e7_2nd_floor_reduced" translatesAutoresizingMaskIntoConstraints="NO" id="5RV-Ki-pcj">
                                 <rect key="frame" x="10" y="357" width="374" height="428"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="locationPin" translatesAutoresizingMaskIntoConstraints="NO" id="ZiA-Yv-V7Q">
                                 <rect key="frame" x="189" y="464" width="36" height="44"/>

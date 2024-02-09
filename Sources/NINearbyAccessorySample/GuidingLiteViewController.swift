@@ -211,9 +211,10 @@ class GuidingLiteViewController: UIViewController
         let imageViewSize = imageView.bounds.size
         let imageSize = image.size
 
-        self.png_to_phone_scale_x = imageViewSize.width / imageSize.width
-        self.png_to_phone_scale_y = imageViewSize.height / imageSize.height
+        self.png_to_phone_scale_x = imageSize.width / imageViewSize.width
+        self.png_to_phone_scale_y = imageSize.height / imageViewSize.height
 
+        print("imageViewSize: \(imageViewSize), imageSize: \(imageSize)")
 
         let w = imageView.frame.size.width
         let h = imageView.frame.size.height
@@ -416,8 +417,8 @@ class GuidingLiteViewController: UIViewController
         // Add your logic here
         if (currDestState == S_SET_DEST)
         {
-            let real_life_point = self.phone_to_real_life( self.pinLocation )
 
+            let real_life_point = self.phone_to_real_life( self.pinLocation )
 
             let dict = ["endpoint": [real_life_point.x, real_life_point.y, 0]]
             let json = serializeJSON(dict)
@@ -525,11 +526,7 @@ class GuidingLiteViewController: UIViewController
 
     func updateLocationPinImage(pos: CGPoint)
     {
-        let adjustedPos = CGPoint( x: pos.x - locationPinImage.frame.size.width / 2,
-                                   y: pos.y - locationPinImage.frame.size.height )
-
-        locationPinImage.frame.origin = adjustedPos
-        // locationPinImage.frame.origin = pos
+        locationPinImage.frame.origin = self.calc_pin_location(pos)
     }
 
     func isPointInMap(pos: CGPoint) -> Bool
@@ -548,6 +545,8 @@ class GuidingLiteViewController: UIViewController
         let real_phone_point = CGPoint( x: phone_point.x - self.mapBottomLeft.x,
                                         y: self.mapBottomLeft.y - phone_point.y )
 
+        //  print("Phone to png: \(phone_point) -> \(CGPoint(x: real_phone_point.x / self.png_to_phone_scale_x, y: real_phone_point.y / self.png_to_phone_scale_y))")
+
         let ret = CGPoint( x: real_phone_point.x * self.png_to_phone_scale_x * self.real_life_to_png_scale,
                            y: real_phone_point.y * self.png_to_phone_scale_y * self.real_life_to_png_scale )
 
@@ -558,9 +557,15 @@ class GuidingLiteViewController: UIViewController
 
     func real_life_to_phone(_ real_life_point: CGPoint) -> CGPoint
     {
-        let ret = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
-                           y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
+        let ret = CGPoint( x: real_life_point.x * self.png_to_phone_scale_x * self.real_life_to_png_scale,
+                           y: real_life_point.y * self.png_to_phone_scale_y * self.real_life_to_png_scale )
         return ret
+    }
+
+    func calc_pin_location(_ point: CGPoint) -> CGPoint
+    {
+        return CGPoint( x: point.x - locationPinImage.frame.size.width / 2,
+                        y: point.y - locationPinImage.frame.size.height )
     }
 
     // Returns the current position of the user arrow relative to the map area.
