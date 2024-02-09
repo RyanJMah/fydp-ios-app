@@ -403,6 +403,8 @@ class GuidingLiteViewController: UIViewController
         // let png_y = y / self.real_life_to_png_scale!
         let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
 
+        print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
+
         self.updateUserArrowPos(pos: phone_point)
     }
     /////////////////////////////////////////////////////////////////////////////////////
@@ -493,35 +495,35 @@ class GuidingLiteViewController: UIViewController
 
     func updateUserArrowPos(pos: CGPoint)
     {
-        var scaled_coord = CGPoint(x: (mapBottomLeft.x + pos.x), y: (mapBottomLeft.y - pos.y))
+        var point = pos
         
-        // Before updating the position coordinate, make sure that this point does not exceed
-        // the map bounds.
-        if (scaled_coord.x >= mapTopRight.x)
-        {
-            scaled_coord.x = mapTopRight.x
-        }
-        else if (scaled_coord.x <= mapTopLeft.x)
-        {
-            scaled_coord.x = mapTopLeft.x
-        }
+        // // Before updating the position coordinate, make sure that this point does not exceed
+        // // the map bounds.
+        // if (point.x >= mapTopRight.x)
+        // {
+        //     point.x = mapTopRight.x
+        // }
+        // else if (point.x <= mapTopLeft.x)
+        // {
+        //     point.x = mapTopLeft.x
+        // }
         
-        if (scaled_coord.y >= mapBottomRight.y)
-        {
-            scaled_coord.y = mapBottomRight.y
-        }
-        else if(scaled_coord.y <= mapTopRight.y)
-        {
-            scaled_coord.y = mapTopRight.y
-        }
+        // if (point.y >= mapBottomRight.y)
+        // {
+        //     point.y = mapBottomRight.y
+        // }
+        // else if(point.y <= mapTopRight.y)
+        // {
+        //     point.y = mapTopRight.y
+        // }
         
-        let halfWidth = userArrowImage.frame.size.width / 2.0
-        let halfHeight = userArrowImage.frame.size.height / 2.0
+        // let halfWidth = userArrowImage.frame.size.width / 2.0
+        // let halfHeight = userArrowImage.frame.size.height / 2.0
         
-        scaled_coord.x -= halfWidth
-        scaled_coord.y -= halfHeight
+        // point.x -= halfWidth
+        // point.y -= halfHeight
 
-        userArrowImage.frame.origin = scaled_coord
+        userArrowImage.frame.origin = point
     }
 
     func updateLocationPinImage(pos: CGPoint)
@@ -557,8 +559,12 @@ class GuidingLiteViewController: UIViewController
 
     func real_life_to_phone(_ real_life_point: CGPoint) -> CGPoint
     {
-        let ret = CGPoint( x: real_life_point.x * self.png_to_phone_scale_x * self.real_life_to_png_scale,
-                           y: real_life_point.y * self.png_to_phone_scale_y * self.real_life_to_png_scale )
+        let phone_point = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
+                                   y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
+
+        let ret = CGPoint( x: phone_point.x + self.mapBottomLeft.x,
+                           y: self.mapBottomLeft.y - phone_point.y )
+
         return ret
     }
 
