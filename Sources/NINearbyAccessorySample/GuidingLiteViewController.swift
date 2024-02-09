@@ -273,11 +273,11 @@ class GuidingLiteViewController: UIViewController
         self.mqtt_handler.metadata_callback = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
-        _ = Timer.scheduledTimer( timeInterval: 0.2,
-                                  target: self,
-                                  selector: #selector(ui_timer),
-                                  userInfo: nil,
-                                  repeats: true )
+        // _ = Timer.scheduledTimer( timeInterval: 0.2,
+        //                           target: self,
+        //                           selector: #selector(ui_timer),
+        //                           userInfo: nil,
+        //                           repeats: true )
 
         /*
          * Schedule the expensive initialization to run after the view has loaded,
@@ -323,11 +323,11 @@ class GuidingLiteViewController: UIViewController
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Repeated Timers
-    @objc func ui_timer()
-    {
-        self.updateUserArrowPos(pos: self.user_position)
-        self.updateDirectionArrow(angle: self.user_heading)
-    }
+    // @objc func ui_timer()
+    // {
+    //     self.updateUserArrowPos(pos: self.user_position)
+    //     self.updateDirectionArrow(angle: self.user_heading)
+    // }
 
     @objc func telemetry_timer()
     {
@@ -403,7 +403,7 @@ class GuidingLiteViewController: UIViewController
         // let png_y = y / self.real_life_to_png_scale!
         let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
 
-        print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
+        // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
 
         self.updateUserArrowPos(pos: phone_point)
     }
@@ -497,25 +497,7 @@ class GuidingLiteViewController: UIViewController
     {
         var point = pos
         
-        // // Before updating the position coordinate, make sure that this point does not exceed
-        // // the map bounds.
-        // if (point.x >= mapTopRight.x)
-        // {
-        //     point.x = mapTopRight.x
-        // }
-        // else if (point.x <= mapTopLeft.x)
-        // {
-        //     point.x = mapTopLeft.x
-        // }
-        
-        // if (point.y >= mapBottomRight.y)
-        // {
-        //     point.y = mapBottomRight.y
-        // }
-        // else if(point.y <= mapTopRight.y)
-        // {
-        //     point.y = mapTopRight.y
-        // }
+        // print("User arrow position: \(point)")
         
         let halfWidth = userArrowImage.frame.size.width / 2.0
         let halfHeight = userArrowImage.frame.size.height / 2.0
@@ -523,7 +505,10 @@ class GuidingLiteViewController: UIViewController
         point.x -= halfWidth
         point.y -= halfHeight
 
-        userArrowImage.frame.origin = point
+        UIView.animate(withDuration: 0.1)
+        {
+            self.userArrowImage.frame.origin = point
+        }
     }
 
     func updateLocationPinImage(pos: CGPoint)

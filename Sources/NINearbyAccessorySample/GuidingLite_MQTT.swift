@@ -12,7 +12,7 @@ import CocoaMQTT
 let USER_ID = 69
 
 let HEARTBEAT_TOPIC    = "gl/user/\(USER_ID)/heartbeat"
-let DATA_TOPIC_BASE    = "gl/user/\(USER_ID)/data/"
+let DATA_TOPIC_BASE    = "gl/user/\(USER_ID)/data/anchor/"
 let HEADING_DATA_TOPIC = "gl/user/\(USER_ID)/data/heading"
 
 // let USER_COORD_TOPIC    = "gl/user/\(USER_ID)/user_coordinates"
@@ -180,16 +180,25 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                 // }
 
             case POSITION_TOPIC:
-                if let callback = position_callback
+                if  let callback = position_callback,
+                    let decodedDict = decodeJSON(message.string!),
+                    let x = decodedDict["x"] as? NSNumber,
+                    let y = decodedDict["y"] as? NSNumber,
+                    let heading = decodedDict["heading"] as? NSNumber
                 {
-                    if let decodedDict = decodeJSON(message.string!)
-                    {
-                        // print(decodedDictionary)
-                        callback( decodedDict["x"] as! Float,
-                                  decodedDict["y"] as! Float,
-                                  decodedDict["heading"] as! Float )
-                    }
+                    callback(x.floatValue, y.floatValue, heading.floatValue)
                 }
+
+                // if let callback = position_callback
+                // {
+                //     if let decodedDict = decodeJSON(message.string!)
+                //     {
+                //         // print(decodedDictionary)
+                //         callback( decodedDict["x"] as! Float,
+                //                   decodedDict["y"] as! Float,
+                //                   decodedDict["heading"] as! Float )
+                //     }
+                // }
 
             case METADATA_TOPIC:
                 if let callback = metadata_callback
