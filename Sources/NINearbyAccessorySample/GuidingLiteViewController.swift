@@ -168,12 +168,6 @@ class GuidingLiteViewController: UIViewController
     var map_width:  Float? = nil
     var map_height: Float? = nil
 
-
-    // let mapTopLeft          = CGPoint(x: 10,    y: 375)
-    // let mapTopRight         = CGPoint(x: 359,   y: 375)
-    // let mapBottomLeft       = CGPoint(x: 10,    y: 736)
-    // let mapBottomRight      = CGPoint(x: 359,   y: 736)
-    
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
     var uwb_manager: GuidingLite_UWBManager?
@@ -181,19 +175,10 @@ class GuidingLiteViewController: UIViewController
     var haptics_controller: GuidingLight_HapticsController?
 
 
-    /*
-     * real_life = png * real_life_to_png_scale
-     *
-     * png = phone * png_to_phone_scale
-     *
-     * real_life = phone * real_life_to_png_scale * png_to_phone_scale
-     *
-     * Default to 1 so we don't have to unwrap it every time
-     */
-    var real_life_to_png_scale: CGFloat = 0.9163987138263665
-    // var real_life_to_png_scale: CGFloat = 1.0
-    var png_to_phone_scale_y: CGFloat   = 1.0
-    var png_to_phone_scale_x: CGFloat   = 1.0
+    // var real_life_to_png_scale: CGFloat = 0.9163987138263665
+    var real_life_to_png_scale: CGFloat = 1.0
+    var png_to_phone_scale_y:   CGFloat = 1.0
+    var png_to_phone_scale_x:   CGFloat = 1.0
 
     
     /////////////////////////////////////////////////////////////////////////////////////
@@ -403,7 +388,6 @@ class GuidingLiteViewController: UIViewController
     func mqtt_metadata_msg_callback(metadata: [String: Any])
     {
         // print("Received metadata: \(metadata)")
-        // print("scale = \(metadata["real_life_to_floorplan_png_scale"])")
         self.real_life_to_png_scale = metadata["real_life_to_floorplan_png_scale"] as! CGFloat
     }
 
@@ -411,8 +395,6 @@ class GuidingLiteViewController: UIViewController
     {
         let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
-
-        // self.user_position = phone_point
 
         self.updateUserArrowPos(pos: phone_point)
     }
@@ -504,11 +486,7 @@ class GuidingLiteViewController: UIViewController
 
     func updateDirectionArrow(angle: Float)
     {
-        // let delta = angle - self.direction_arrow_angle
-
         self.rotateUIObject(self.directionArrowImage, angle)
-
-        // self.direction_arrow_angle = angle
     }
 
     func updateUserArrowPos(pos: CGPoint)
@@ -531,12 +509,7 @@ class GuidingLiteViewController: UIViewController
 
     func updateUserArrowDirection(angle: Float)
     {
-        // let delta = angle - self.user_heading
-        // print("User arrow angle: \(angle), user_heading: \(self.user_heading), delta: \(delta)")
-
         self.rotateUIObject(self.userArrowImage, angle)
-
-        // self.user_heading = angle
     }
 
     func updateLocationPinImage(pos: CGPoint)
