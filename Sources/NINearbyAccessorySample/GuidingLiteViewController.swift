@@ -58,6 +58,12 @@ func serializeJSON(_ jsonObject: [String: Any]) -> String? {
     }
 }
 
+func round(_ value: Float, _ places: Int) -> Double
+{
+    let divisor = pow(10.0, Double(places))
+    return (Double(value) * divisor).rounded() / divisor
+}
+
 class DebugViewController: UIViewController
 {
     var timer: Timer?
@@ -94,12 +100,6 @@ class DebugViewController: UIViewController
         timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(updateLabels), userInfo: nil, repeats: true)
     }
 
-    func round(_ value: Float, _ places: Int) -> Double
-    {
-        let divisor = pow(10.0, Double(places))
-        return (Double(value) * divisor).rounded() / divisor
-    }
-
     @objc func updateLabels()
     {
         let anchor0_data = self.uwb_manager?.anchor_data[0]
@@ -122,10 +122,10 @@ class DebugViewController: UIViewController
         anchor2AngleLabel.text = String(anchor2_data?.azimuth_deg ?? 0)
         anchor3AngleLabel.text = String(anchor3_data?.azimuth_deg ?? 0)
          
-        anchor0DistLabel.text = String( self.round(anchor0_data?.distance_m ?? 0.0, 4) )
-        anchor1DistLabel.text = String( self.round(anchor1_data?.distance_m ?? 0.0, 4) )
-        anchor2DistLabel.text = String( self.round(anchor2_data?.distance_m ?? 0.0, 4) )
-        anchor3DistLabel.text = String( self.round(anchor3_data?.distance_m ?? 0.0, 4) )
+        anchor0DistLabel.text = String( round(anchor0_data?.distance_m ?? 0.0, 4) )
+        anchor1DistLabel.text = String( round(anchor1_data?.distance_m ?? 0.0, 4) )
+        anchor2DistLabel.text = String( round(anchor2_data?.distance_m ?? 0.0, 4) )
+        anchor3DistLabel.text = String( round(anchor3_data?.distance_m ?? 0.0, 4) )
     }
 }
 
@@ -175,10 +175,13 @@ class GuidingLiteViewController: UIViewController
     var png_to_phone_scale_y:   CGFloat = 1.0
     var png_to_phone_scale_x:   CGFloat = 1.0
 
-    var user_position: CGPoint = CGPoint(x: 0, y: 0)
-    var user_heading: Float = 0.0
+    var prev_user_position:  CGPoint = CGPoint(x: 0, y: 0)
+    var user_position:       CGPoint = CGPoint(x: 0, y: 0)
+    var user_heading:        Float = 0.0
+    var user_target_heading: Float = 90.0
 
     var server_tick_period: TimeInterval = 0.1
+    var ui_update_period:   TimeInterval = 1/60
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Initialization
@@ -189,16 +192,15 @@ class GuidingLiteViewController: UIViewController
 
         self.init_geometry()
 
-
-        locationPinImage.isHidden = true
+        self.locationPinImage.isHidden = true
 
         self.mqtt_handler.connect_callback        = self.mqtt_connect_callback
         self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
-        self.mqtt_handler.target_heading_callback = self.mqtt_heading_msg_callback
+        self.mqtt_handler.target_heading_callback = self.mqtt_target_heading_msg_callback
         self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
-        _ = Timer.scheduledTimer( timeInterval: 0.0222222222222222,
+        _ = Timer.scheduledTimer( timeInterval: self.ui_update_period,
                                   target: self,
                                   selector: #selector(ui_timer),
                                   userInfo: nil,
@@ -236,6 +238,8 @@ class GuidingLiteViewController: UIViewController
         let imageViewSize = imageView.bounds.size
         let imageSize = image.size
 
+        self.userArrowImage.frame.origin = self.user_position
+
         self.png_to_phone_scale_x = imageSize.width / imageViewSize.width
         self.png_to_phone_scale_y = imageSize.height / imageViewSize.height
 
@@ -250,14 +254,6 @@ class GuidingLiteViewController: UIViewController
         self.mapBottomRight = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y + h)
 
         print("Map borders: top left = \(mapTopLeft), top right = \(mapTopRight), bottom left = \(mapBottomLeft), bottom right = \(mapBottomRight)")
-        /////////////////////////////////////////////////////////////////////////////////
-
-
-        /////////////////////////////////////////////////////////////////////////////////
-        // Initialize arrow rotation
-
-        self.rotateUIObject(self.userArrowImage, 0.0)
-        self.rotateUIObject(self.directionArrowImage, 0.0)
         /////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -317,8 +313,11 @@ class GuidingLiteViewController: UIViewController
     // Repeated Timers
     @objc func ui_timer()
     {
-        self.updateUserArrowPos(pos: self.user_position)
-        self.updateDirectionArrow(angle: self.user_heading)
+        // TODO: change to user_heading when the heading data is available
+        self.updateUserArrow( pos: self.user_position,
+                              angle: self.user_target_heading )
+
+        self.updateDirectionArrow(angle: self.user_target_heading)
     }
 
     @objc func telemetry_timer()
@@ -398,10 +397,10 @@ class GuidingLiteViewController: UIViewController
         // self.updateUserArrowPos(pos: phone_point)
     }
 
-    func mqtt_heading_msg_callback(heading: Float)
+    func mqtt_target_heading_msg_callback(heading: Float)
     {
         // print("Received heading: \(heading)")
-        self.user_heading = heading
+        self.user_target_heading = heading
         // self.updateDirectionArrow(angle: heading)
         // self.updateUserArrowDirection(angle: heading)
     }
@@ -465,17 +464,6 @@ class GuidingLiteViewController: UIViewController
         }
     }
 
-    func rotateUIObject(_ UI_Object: UIImageView, _ angle: Float)
-    {
-        UIView.animate( withDuration: self.server_tick_period ) {
-            // Convert the angle to radians
-            let radians = (angle - 90) * .pi / 180.0
-
-            // Apply the rotation transform, negative because it rotates clockwise by default
-            UI_Object.transform = CGAffineTransform(rotationAngle: CGFloat(-1 * radians))
-        }
-    }
-
     func updatePinPosition(for touch: UITouch)
     {
         if (currDestState == S_SET_DEST)
@@ -491,32 +479,59 @@ class GuidingLiteViewController: UIViewController
         }
     }
 
-    func updateDirectionArrow(angle: Float)
+    func updateUserArrow(pos: CGPoint, angle: Float)
     {
-        self.rotateUIObject(self.directionArrowImage, angle)
+        let radians = self.fix_angle(angle)
+
+        let dx = pos.x - userArrowImage.center.x
+        let dy = pos.y - userArrowImage.center.y
+        
+        // Concatenate translation and rotation transformations
+        let transform = CGAffineTransform(translationX: dx, y: dy)
+                        .rotated(by: CGFloat(radians))
+
+        self.userArrowImage.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+
+        UIView.animate(withDuration: self.ui_update_period)
+        {
+            // Apply the concatenated transformation
+            self.userArrowImage.transform = transform
+        }
+
+        self.prev_user_position = pos
     }
 
-    func updateUserArrowPos(pos: CGPoint)
+
+    // func updateUserArrow(pos: CGPoint, angle: Float)
+    // {
+    //     var point = pos
+        
+    //     // print("User arrow position: \(point)")
+        
+    //     let halfWidth = userArrowImage.frame.size.width / 2.0
+    //     let halfHeight = userArrowImage.frame.size.height / 2.0
+        
+    //     point.x -= halfWidth
+    //     point.y -= halfHeight
+
+    //     let radians  = self.fix_angle(angle)
+    //     let rotation = CGAffineTransform(rotationAngle: CGFloat(radians))
+
+    //     UIView.animate( withDuration: self.server_tick_period )
+    //     {
+    //         // self.userArrowImage.frame.origin = point
+    //         self.userArrowImage.transform    = rotation
+    //     }    
+    // }
+
+    func updateDirectionArrow(angle: Float)
     {
-        var point = pos
-        
-        // print("User arrow position: \(point)")
-        
-        let halfWidth = userArrowImage.frame.size.width / 2.0
-        let halfHeight = userArrowImage.frame.size.height / 2.0
-        
-        point.x -= halfWidth
-        point.y -= halfHeight
+        let radians = self.fix_angle(angle)
 
         UIView.animate( withDuration: self.server_tick_period )
         {
-            self.userArrowImage.frame.origin = point
+            self.directionArrowImage.transform = CGAffineTransform(rotationAngle: CGFloat(radians))
         }
-    }
-
-    func updateUserArrowDirection(angle: Float)
-    {
-        self.rotateUIObject(self.userArrowImage, angle)
     }
 
     func updateLocationPinImage(pos: CGPoint)
@@ -565,6 +580,11 @@ class GuidingLiteViewController: UIViewController
     {
         return CGPoint( x: point.x - locationPinImage.frame.size.width / 2,
                         y: point.y - locationPinImage.frame.size.height )
+    }
+
+    func fix_angle(_ angle: Float) -> Float
+    {
+        return ( (angle - 90) * .pi / 180.0 ) * -1
     }
 
     // Returns the current position of the user arrow relative to the map area.
