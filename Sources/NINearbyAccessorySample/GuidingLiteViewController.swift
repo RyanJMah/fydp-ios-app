@@ -151,6 +151,8 @@ class GuidingLiteViewController: UIViewController
     let S_GO = 2
     var currDestState: Int = 0
     
+    var path_layer: CAShapeLayer = CAShapeLayer()
+
     // Pin location
     var pinLocation: CGPoint = CGPoint(x: 0, y: 0)
     
@@ -195,6 +197,7 @@ class GuidingLiteViewController: UIViewController
         self.locationPinImage.isHidden = true
 
         self.mqtt_handler.connect_callback        = self.mqtt_connect_callback
+        self.mqtt_handler.pathing_callback        = self.mqtt_pathing_msg_callback
         self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
         self.mqtt_handler.target_heading_callback = self.mqtt_target_heading_msg_callback
         self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
@@ -403,6 +406,36 @@ class GuidingLiteViewController: UIViewController
         self.user_target_heading = heading
         // self.updateDirectionArrow(angle: heading)
         // self.updateUserArrowDirection(angle: heading)
+    }
+
+    func mqtt_pathing_msg_callback(server_path: [CGPoint])
+    {
+        var points = [CGPoint]()
+
+        for point in server_path
+        {
+            points.append( self.real_life_to_phone(point) )
+        }
+
+        // print("Received path: \(phone_points)")
+
+        let path = UIBezierPath()
+        
+        guard let firstPoint = points.first else {
+            return
+        }
+        path.move(to: firstPoint)
+        
+        for point in points.dropFirst() {
+            path.addLine(to: point)
+        }
+        
+        self.path_layer.path        = path.cgPath
+        self.path_layer.strokeColor = UIColor.red.cgColor
+        self.path_layer.fillColor   = UIColor.clear.cgColor
+        self.path_layer.lineWidth   = 2.0
+        
+        view.layer.addSublayer(self.path_layer)
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
