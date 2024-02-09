@@ -155,7 +155,6 @@ class GuidingLiteViewController: UIViewController
     var pinLocation: CGPoint = CGPoint(x: 0, y: 0)
     
     // MQTT
-    var first_time_mqtt_init = true
     var mqtt_client: MQTTClient = MQTTClient()
     var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
     
@@ -165,24 +164,65 @@ class GuidingLiteViewController: UIViewController
     var mapBottomLeft:  CGPoint = CGPoint(x: 0.0, y: 0.0)
     var mapBottomRight: CGPoint = CGPoint(x: 0.0, y: 0.0)
 
-    var map_width:  Float? = nil
-    var map_height: Float? = nil
-
     let pinDefaultLocation  = CGPoint(x: 184.5, y: 555.5)
 
     var uwb_manager: GuidingLite_UWBManager?
     var heading_sensor: GuidingLite_HeadingSensor?
     var haptics_controller: GuidingLight_HapticsController?
 
-
     // var real_life_to_png_scale: CGFloat = 0.9163987138263665
     var real_life_to_png_scale: CGFloat = 1.0
     var png_to_phone_scale_y:   CGFloat = 1.0
     var png_to_phone_scale_x:   CGFloat = 1.0
 
-    
+    var user_position: CGPoint = CGPoint(x: 0, y: 0)
+    var user_heading: Float = 0.0
+
+    var server_tick_period: TimeInterval = 0.1
+
     /////////////////////////////////////////////////////////////////////////////////////
     // Initialization
+
+    override func viewDidLoad()
+    {
+        super.viewDidLoad()
+
+        self.init_geometry()
+
+
+        locationPinImage.isHidden = true
+
+        self.mqtt_handler.connect_callback        = self.mqtt_connect_callback
+        self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
+        self.mqtt_handler.target_heading_callback = self.mqtt_heading_msg_callback
+        self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
+
+        // Main UI timer, 200ms
+        _ = Timer.scheduledTimer( timeInterval: 0.0222222222222222,
+                                  target: self,
+                                  selector: #selector(ui_timer),
+                                  userInfo: nil,
+                                  repeats: true )
+
+        /*
+         * Schedule the expensive initialization to run after the view has loaded,
+         * so that the UI remains responsive.
+         *
+         * Haptics will be initialized even after these, since it is technically the
+         * most "real-time" task, and the UWB initialization interferes with it
+         */
+        _ = Timer.scheduledTimer( timeInterval: 1,
+                                  target: self,
+                                  selector: #selector(self.expensive_initialization),
+                                  userInfo: nil,
+                                  repeats: false )  // Only run once
+
+        _ = Timer.scheduledTimer( timeInterval: 5,
+                                  target: self,
+                                  selector: #selector(self.haptics_init),
+                                  userInfo: nil,
+                                  repeats: false )  // Only run once
+    }
 
     func init_geometry()
     {
@@ -223,8 +263,6 @@ class GuidingLiteViewController: UIViewController
 
     func showIPAddressInputDialog()
     {
-        self.first_time_mqtt_init = false
-
         let alertController = UIAlertController(title: "Enter IP Address", message: nil, preferredStyle: .alert)
 
         alertController.addTextField { (textField) in
@@ -253,46 +291,6 @@ class GuidingLiteViewController: UIViewController
         present(alertController, animated: true, completion: nil)
     }
 
-    override func viewDidLoad()
-    {
-        super.viewDidLoad()
-
-        self.init_geometry()
-
-
-        locationPinImage.isHidden = true
-
-        self.mqtt_handler.connect_callback  = self.mqtt_connect_callback
-        self.mqtt_handler.position_callback = self.mqtt_position_msg_callback
-        self.mqtt_handler.metadata_callback = self.mqtt_metadata_msg_callback
-
-        // Main UI timer, 200ms
-        // _ = Timer.scheduledTimer( timeInterval: 0.2,
-        //                           target: self,
-        //                           selector: #selector(ui_timer),
-        //                           userInfo: nil,
-        //                           repeats: true )
-
-        /*
-         * Schedule the expensive initialization to run after the view has loaded,
-         * so that the UI remains responsive.
-         *
-         * Haptics will be initialized even after these, since it is technically the
-         * most "real-time" task, and the UWB initialization interferes with it
-         */
-        _ = Timer.scheduledTimer( timeInterval: 1,
-                                  target: self,
-                                  selector: #selector(self.expensive_initialization),
-                                  userInfo: nil,
-                                  repeats: false )  // Only run once
-
-        _ = Timer.scheduledTimer( timeInterval: 5,
-                                  target: self,
-                                  selector: #selector(self.haptics_init),
-                                  userInfo: nil,
-                                  repeats: false )  // Only run once
-    }
-
     @objc func expensive_initialization()
     {
         // self.showIPAddressInputDialog()
@@ -311,20 +309,17 @@ class GuidingLiteViewController: UIViewController
     @objc func haptics_init()
     {
         self.haptics_controller = GuidingLight_HapticsController()
-
-        // self.updateDirectionArrow(angle: -90)
-        self.updateUserArrowDirection(angle: 90)
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
 
     /////////////////////////////////////////////////////////////////////////////////////
     // Repeated Timers
-    // @objc func ui_timer()
-    // {
-    //     self.updateUserArrowPos(pos: self.user_position)
-    //     self.updateDirectionArrow(angle: self.user_heading)
-    // }
+    @objc func ui_timer()
+    {
+        self.updateUserArrowPos(pos: self.user_position)
+        self.updateDirectionArrow(angle: self.user_heading)
+    }
 
     @objc func telemetry_timer()
     {
@@ -389,14 +384,26 @@ class GuidingLiteViewController: UIViewController
     {
         // print("Received metadata: \(metadata)")
         self.real_life_to_png_scale = metadata["real_life_to_floorplan_png_scale"] as! CGFloat
+
+        let server_tick_hz = metadata["global_update_frequency_Hz"] as! Float
+
+        self.server_tick_period = Double(1.0) / Double(server_tick_hz)
     }
 
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
-        let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
-        // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
+        self.user_position = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
+        // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
 
-        self.updateUserArrowPos(pos: phone_point)
+        // self.updateUserArrowPos(pos: phone_point)
+    }
+
+    func mqtt_heading_msg_callback(heading: Float)
+    {
+        // print("Received heading: \(heading)")
+        self.user_heading = heading
+        // self.updateDirectionArrow(angle: heading)
+        // self.updateUserArrowDirection(angle: heading)
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -460,7 +467,7 @@ class GuidingLiteViewController: UIViewController
 
     func rotateUIObject(_ UI_Object: UIImageView, _ angle: Float)
     {
-        UIView.animate(withDuration: 0.1) {
+        UIView.animate( withDuration: self.server_tick_period ) {
             // Convert the angle to radians
             let radians = (angle - 90) * .pi / 180.0
 
@@ -501,7 +508,7 @@ class GuidingLiteViewController: UIViewController
         point.x -= halfWidth
         point.y -= halfHeight
 
-        UIView.animate(withDuration: 0.1)
+        UIView.animate( withDuration: self.server_tick_period )
         {
             self.userArrowImage.frame.origin = point
         }

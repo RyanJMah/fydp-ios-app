@@ -169,16 +169,13 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                 // }
 
             case HEADING_TOPIC:
-                break
-                // if let callback = target_heading_callback
-                // {
-                //     let jsonString = message.string
-                //     if let decodedDictionary = decodeJSON(jsonString!)
-                //     {
-                //         callback(decodedDictionary["angle"] as! Float)
-                //     }
-                // }
-
+                if  let callback = target_heading_callback,
+                    let decodedDict = decodeJSON(message.string!),
+                    let heading = decodedDict["val"] as? NSNumber
+                {
+                    callback(heading.floatValue)
+                }
+                    
             case POSITION_TOPIC:
                 if  let callback = position_callback,
                     let decodedDict = decodeJSON(message.string!),
