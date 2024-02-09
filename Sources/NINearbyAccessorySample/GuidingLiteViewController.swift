@@ -203,6 +203,8 @@ class GuidingLiteViewController: UIViewController
 
     func init_geometry()
     {
+        /////////////////////////////////////////////////////////////////////////////////
+        // Map borders
         guard let imageView = self.mapImage, let image = imageView.image else {
             print("No image found")
             return
@@ -225,6 +227,14 @@ class GuidingLiteViewController: UIViewController
         self.mapBottomRight = CGPoint(x: imageView.frame.origin.x + w, y: imageView.frame.origin.y + h)
 
         print("Map borders: top left = \(mapTopLeft), top right = \(mapTopRight), bottom left = \(mapBottomLeft), bottom right = \(mapBottomRight)")
+        /////////////////////////////////////////////////////////////////////////////////
+
+
+        /////////////////////////////////////////////////////////////////////////////////
+        // Rotate the arrow -90 degrees, since it's facing north by default,
+        // we want it using cartesian angles
+        self.rotateUIObject(self.userArrowImage, -90.0)
+        /////////////////////////////////////////////////////////////////////////////////
     }
 
     func showIPAddressInputDialog()
@@ -317,6 +327,9 @@ class GuidingLiteViewController: UIViewController
     @objc func haptics_init()
     {
         self.haptics_controller = GuidingLight_HapticsController()
+
+        // self.updateDirectionArrow(angle: 90)
+        // self.updateUserArrowDirection(angle: 90)
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -397,13 +410,10 @@ class GuidingLiteViewController: UIViewController
 
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
-        // print("Received position: x = \(x), y = \(y), heading = \(heading)")
-
-        // let png_x = x / self.real_life_to_png_scale!
-        // let png_y = y / self.real_life_to_png_scale!
         let phone_point = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
-
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(phone_point)")
+
+        self.user_position = phone_point
 
         self.updateUserArrowPos(pos: phone_point)
     }
@@ -467,6 +477,17 @@ class GuidingLiteViewController: UIViewController
         }
     }
 
+    func rotateUIObject(_ UI_Object: UIImageView, _ angle: Float)
+    {
+        UIView.animate(withDuration: 0.1) {
+            // Convert the angle to radians
+            let radians = angle * .pi / 180.0
+
+            // Apply the rotation transform, negative because it rotates clockwise by default
+            UI_Object.transform = CGAffineTransform(rotationAngle: CGFloat(-1 * radians))
+        }
+    }
+
     func updatePinPosition(for touch: UITouch)
     {
         if (currDestState == S_SET_DEST)
@@ -481,17 +502,13 @@ class GuidingLiteViewController: UIViewController
             }
         }
     }
-    
-    func updateDirectionArrow(angle: Float)
-    {
-        UIView.animate(withDuration: 0.5) {
-            // Convert the angle to radians
-            let radians = angle * .pi / 180.0
 
-            // Apply the rotation transform
-            self.directionArrowImage.transform = CGAffineTransform(rotationAngle: CGFloat(radians))
-        }
-    }
+    // func updateDirectionArrow(angle: Float)
+    // {
+    //     let delta = angle - self.user_heading
+
+    //     self.rotateUIObject(self.directionArrowImage, delta)
+    // }
 
     func updateUserArrowPos(pos: CGPoint)
     {
@@ -509,6 +526,15 @@ class GuidingLiteViewController: UIViewController
         {
             self.userArrowImage.frame.origin = point
         }
+    }
+
+    func updateUserArrowDirection(angle: Float)
+    {
+        let delta = angle - self.user_heading
+
+        self.rotateUIObject(self.userArrowImage, delta)
+
+        self.user_heading = angle
     }
 
     func updateLocationPinImage(pos: CGPoint)
