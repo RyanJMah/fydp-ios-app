@@ -517,11 +517,11 @@ class GuidingLiteViewController: UIViewController
         //     point.y = mapTopRight.y
         // }
         
-        // let halfWidth = userArrowImage.frame.size.width / 2.0
-        // let halfHeight = userArrowImage.frame.size.height / 2.0
+        let halfWidth = userArrowImage.frame.size.width / 2.0
+        let halfHeight = userArrowImage.frame.size.height / 2.0
         
-        // point.x -= halfWidth
-        // point.y -= halfHeight
+        point.x -= halfWidth
+        point.y -= halfHeight
 
         userArrowImage.frame.origin = point
     }
