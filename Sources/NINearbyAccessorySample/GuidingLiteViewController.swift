@@ -400,6 +400,11 @@ class GuidingLiteViewController: UIViewController
 
     func mqtt_haptics_msg_callback(haptics: [String: Any])
     {
+        if self.haptics_controller == nil
+        {
+            return
+        }
+
         let intensity = haptics["intensity"] as! NSNumber
         let heartbeat = haptics["heartbeat"] as! Bool
         let done      = haptics["done"] as! Bool
