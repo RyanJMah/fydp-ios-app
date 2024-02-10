@@ -429,7 +429,7 @@ class GuidingLiteViewController: UIViewController
         {
             self.haptics_controller?.set_params( intensity: 0.75,
                                                  sharpness: 1.0,
-                                                 burst_duration: 0.075,
+                                                 burst_duration: 0.07,
                                                  duty_cycle: 0.075 )
         }
     }

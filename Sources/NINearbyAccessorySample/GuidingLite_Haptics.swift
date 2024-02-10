@@ -187,7 +187,10 @@ class GuidingLight_HapticsController
 
             self.burst_timer?.invalidate()
 
-            self.set_params(intensity: 0.0, sharpness: 0.0)
+            self.set_params( intensity: 0.0,
+                             sharpness: 0.0,
+                             burst_duration: self.burst_duration,
+                             duty_cycle: self.duty_cycle )
         }
         catch let error
         {
@@ -226,7 +229,13 @@ class GuidingLight_HapticsController
         self.init_haptic_engine()
 
         self.mode = HapticsMode.continuous
-        self.play_continuous(intensity: 0.0, sharpness: 0.0)
+
+        self.set_params( intensity: 0.0,
+                         sharpness: 0.0,
+                         burst_duration: self.burst_duration,
+                         duty_cycle: self.duty_cycle )
+
+        self.play_continuous()
 
         // TESTS: DELETE LATER
         // _ = Timer.scheduledTimer( timeInterval: 5,
@@ -245,33 +254,20 @@ class GuidingLight_HapticsController
     // Burst duration is in ms
     func set_params( intensity: Float,
                      sharpness: Float,
-                     burst_duration: Float? = nil,
-                     duty_cycle: Float? = nil )
+                     burst_duration: Float,
+                     duty_cycle: Float )
     {
         self.intensity.value = intensity
         self.sharpness.value = sharpness
-
-        if burst_duration != nil
-        {
-            self.burst_duration = burst_duration!
-        }
-
-        if duty_cycle != nil
-        {
-            self.duty_cycle = duty_cycle!
-        }
+        self.burst_duration  = burst_duration
+        self.duty_cycle      = duty_cycle
 
         print("intensity: \(intensity) sharpness: \(sharpness) burst_duration: \(burst_duration) duty_cycle: \(duty_cycle)")
     }
 
-    func play_continuous(intensity: Float? = nil, sharpness: Float? = nil)
+    func play_continuous()
     {
         self.stop_haptics()
-
-        if intensity != nil && sharpness != nil
-        {
-            self.set_params(intensity: intensity!, sharpness: sharpness!)
-        }
 
         self.schedule_next_burst()
 
