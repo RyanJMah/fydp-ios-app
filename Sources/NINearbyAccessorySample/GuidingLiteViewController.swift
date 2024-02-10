@@ -441,6 +441,13 @@ class GuidingLiteViewController: UIViewController
 
     func mqtt_pathing_msg_callback(server_path: [CGPoint])
     {
+        // Clear path if empty
+        if server_path.isEmpty
+        {
+            self.path_layer.path = nil
+            return
+        }
+
         var points = [CGPoint]()
 
         for point in server_path
