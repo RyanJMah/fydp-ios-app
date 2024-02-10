@@ -92,8 +92,7 @@ class GuidingLight_HapticsController
                            duration: 0.125,     sharpness: 1.0 )
 
         self.append_event( time: delay + 2.32,  intensity: 1.0,
-                           duration: 0.15,      sharpness: 1.0 )
-
+                           duration: 0.225,     sharpness: 1.0 )
     }
 
     func init_haptic_engine()
