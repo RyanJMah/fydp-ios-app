@@ -200,6 +200,7 @@ class GuidingLiteViewController: UIViewController
         self.mqtt_handler.pathing_callback        = self.mqtt_pathing_msg_callback
         self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
         self.mqtt_handler.target_heading_callback = self.mqtt_target_heading_msg_callback
+        self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
         self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
@@ -219,12 +220,6 @@ class GuidingLiteViewController: UIViewController
         _ = Timer.scheduledTimer( timeInterval: 1,
                                   target: self,
                                   selector: #selector(self.expensive_initialization),
-                                  userInfo: nil,
-                                  repeats: false )  // Only run once
-
-        _ = Timer.scheduledTimer( timeInterval: 5,
-                                  target: self,
-                                  selector: #selector(self.haptics_init),
                                   userInfo: nil,
                                   repeats: false )  // Only run once
     }
@@ -303,10 +298,7 @@ class GuidingLiteViewController: UIViewController
 
         self.uwb_manager    = g_uwb_manager
         self.heading_sensor = GuidingLite_HeadingSensor()
-    }
 
-    @objc func haptics_init()
-    {
         self.haptics_controller = GuidingLight_HapticsController()
     }
     /////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +310,7 @@ class GuidingLiteViewController: UIViewController
     {
         // TODO: change to user_heading when the heading data is available
         self.updateUserArrow( pos: self.user_position,
-                              angle: self.user_target_heading )
+                              angle: self.user_heading )
 
         self.updateDirectionArrow(angle: self.user_target_heading)
     }
@@ -395,17 +387,51 @@ class GuidingLiteViewController: UIViewController
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
         self.user_position = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
-        // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
+        self.user_heading  = heading
 
-        // self.updateUserArrowPos(pos: phone_point)
+        // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
     }
 
     func mqtt_target_heading_msg_callback(heading: Float)
     {
         // print("Received heading: \(heading)")
         self.user_target_heading = heading
-        // self.updateDirectionArrow(angle: heading)
-        // self.updateUserArrowDirection(angle: heading)
+    }
+
+    func mqtt_haptics_msg_callback(haptics: [String: Any])
+    {
+        let intensity = haptics["intensity"] as! NSNumber
+        let sharpness = haptics["sharpness"] as! NSNumber
+        let heartbeat = haptics["heartbeat"] as! Bool
+        let done      = haptics["done"] as! Bool
+
+        if done
+        {
+            self.haptics_controller?.play_double_beep()
+        }
+        else // !done
+        {
+            // Put into continuous mode
+            if self.haptics_controller?.mode != HapticsMode.continuous
+            {
+                self.haptics_controller?.play_continuous()
+            }
+        }
+
+        if !heartbeat
+        {
+            self.haptics_controller?.set_params( intensity: intensity.floatValue,
+                                                 sharpness: sharpness.floatValue,
+                                                 burst_duration: 0.25,
+                                                 duty_cycle: 1.0 )
+        }
+        else // heartbeat
+        {
+            self.haptics_controller?.set_params( intensity: 0.75,
+                                                 sharpness: 1.0,
+                                                 burst_duration: 0.075,
+                                                 duty_cycle: 0.075 )
+        }
     }
 
     func mqtt_pathing_msg_callback(server_path: [CGPoint])

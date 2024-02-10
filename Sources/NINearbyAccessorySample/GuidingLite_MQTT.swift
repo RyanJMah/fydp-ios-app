@@ -26,6 +26,7 @@ let PATHFINDING_CONFIG_TOPIC = "gl/server/pathfinding/config"
 let PATHING_TOPIC  = "gl/user/\(USER_ID)/path"
 let HEADING_TOPIC  = "gl/user/\(USER_ID)/target_heading"
 let POSITION_TOPIC = "gl/user/\(USER_ID)/position"
+let HAPTICS_TOPIC  = "gl/user/\(USER_ID)/haptics_options"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
@@ -118,6 +119,16 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
 
     var target_heading_callback: ((Float) -> Void)? = nil
 
+    /*
+    {
+        "intensity": 0.5,
+        "sharpness": 0.5,
+        "heartbeat": false,
+        "done": false
+    }
+    */
+    var haptics_callback: (( [String: Any] ) -> Void)? = nil
+
     // Takes in dictionary of metadata
     var metadata_callback: ( ([String: Any]) -> Void )? = nil
     ////////////////////////////////////////////////////////////////////////
@@ -130,6 +141,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         mqtt.subscribe(PATHING_TOPIC)
         mqtt.subscribe(HEADING_TOPIC)
         mqtt.subscribe(POSITION_TOPIC)
+        mqtt.subscribe(HAPTICS_TOPIC)
 
         mqtt.subscribe(METADATA_TOPIC)
 
@@ -182,7 +194,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                     callback(points)
                 }
 
-
             case HEADING_TOPIC:
                 if  let callback = target_heading_callback,
                     let decodedDict = decodeJSON(message.string!),
@@ -190,6 +201,14 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                 {
                     callback(heading.floatValue)
                 }
+
+            case HAPTICS_TOPIC:
+                if  let callback = haptics_callback,
+                    let decodedDict = decodeJSON(message.string!)
+                {
+                    callback(decodedDict)
+                }
+
                     
             case POSITION_TOPIC:
                 if  let callback = position_callback,

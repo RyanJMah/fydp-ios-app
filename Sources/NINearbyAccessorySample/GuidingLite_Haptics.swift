@@ -14,6 +14,12 @@ func ms_to_us(_ ms: UInt32) -> UInt32
     return ms * 1000
 }
 
+enum HapticsMode
+{
+    case continuous
+    case special_pattern
+}
+
 class GuidingLight_HapticsController
 {
     // Haptic Engine & Player State:
@@ -34,6 +40,8 @@ class GuidingLight_HapticsController
     private var pattern = [CHHapticEvent]()
 
     private var burst_timer: Timer?
+
+    var mode = HapticsMode.continuous
 
     func init_double_beep_pattern(delay: Double)
     {
@@ -217,20 +225,21 @@ class GuidingLight_HapticsController
     {
         self.init_haptic_engine()
 
-        self.play_continuous(intensity: 0.75, sharpness: 0.5)
+        self.mode = HapticsMode.continuous
+        self.play_continuous(intensity: 0.0, sharpness: 0.0)
 
         // TESTS: DELETE LATER
-        _ = Timer.scheduledTimer( timeInterval: 5,
-                                  target: self,
-                                  selector: #selector(play_continuous_heartbeat),
-                                  userInfo: nil,
-                                  repeats: false )
+        // _ = Timer.scheduledTimer( timeInterval: 5,
+        //                           target: self,
+        //                           selector: #selector(play_continuous_heartbeat),
+        //                           userInfo: nil,
+        //                           repeats: false )
 
-        _ = Timer.scheduledTimer( timeInterval: 15,
-                                  target: self,
-                                  selector: #selector(play_double_beep),
-                                  userInfo: nil,
-                                  repeats: false )
+        // _ = Timer.scheduledTimer( timeInterval: 15,
+        //                           target: self,
+        //                           selector: #selector(play_double_beep),
+        //                           userInfo: nil,
+        //                           repeats: false )
     }
 
     // Burst duration is in ms
@@ -257,18 +266,16 @@ class GuidingLight_HapticsController
 
     func play_continuous(intensity: Float? = nil, sharpness: Float? = nil)
     {
+        self.stop_haptics()
+
         if intensity != nil && sharpness != nil
         {
             self.set_params(intensity: intensity!, sharpness: sharpness!)
         }
 
         self.schedule_next_burst()
-    }
 
-    @objc func play_continuous_heartbeat()
-    {
-        self.set_params(intensity: 0.75, sharpness: 1.0, burst_duration: 0.075, duty_cycle: 0.075)
-        self.play_continuous()
+        self.mode = HapticsMode.continuous
     }
 
     @objc func play_double_beep()
@@ -277,5 +284,7 @@ class GuidingLight_HapticsController
 
         self.init_double_beep_pattern(delay: 1.5)
         self.play_pattern(self.pattern)
+
+        self.mode = HapticsMode.special_pattern
     }
 }
