@@ -432,7 +432,7 @@ class GuidingLiteViewController: UIViewController
         }
         else // heartbeat
         {
-            self.haptics_controller?.set_params( intensity: 0.75,
+            self.haptics_controller?.set_params( intensity: 0.5,
                                                  sharpness: 1.0,
                                                  burst_duration: 0.07,
                                                  duty_cycle: 0.075 )
