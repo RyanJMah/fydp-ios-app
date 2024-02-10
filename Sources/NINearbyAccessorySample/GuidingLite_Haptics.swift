@@ -73,32 +73,27 @@ class GuidingLight_HapticsController
     {
         self.pattern.removeAll()
 
-        let intensity_param = CHHapticEventParameter( parameterID: .hapticIntensity, value: 0.0 )
-        let sharpness_param = CHHapticEventParameter( parameterID: .hapticSharpness, value: 0.0 )
+        self.append_event( time: delay + 0,     intensity: 1.0,
+                           duration: 0.175,     sharpness: 1.0 )
 
-        intensity_param.value = 0.75
-        sharpness_param.value = 1.0
+        self.append_event( time: delay + 0.33,  intensity: 1.0,
+                           duration: 0.125,     sharpness: 1.0 )
 
-        var continuousEvent: CHHapticEvent
+        self.append_event( time: delay + 0.61,  intensity: 1.0,
+                           duration: 0.125,     sharpness: 1.0 )
 
-        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
-                                         parameters: [intensity_param, sharpness_param],
-                                         relativeTime: delay + 0,
-                                         duration: 0.1 )
-        self.pattern.append(continuousEvent)
+        self.append_event( time: delay + 0.77,  intensity: 1.0,
+                           duration: 0.125,     sharpness: 1.0 )
 
+        self.append_event( time: delay + 1.17,  intensity: 1.0,
+                           duration: 0.175,     sharpness: 1.0 )
 
-        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
-                                         parameters: [intensity_param, sharpness_param],
-                                         relativeTime: delay + 0.37,
-                                         duration: 0.1 )
-        self.pattern.append(continuousEvent)
+        self.append_event( time: delay + 1.93,  intensity: 1.0,
+                           duration: 0.125,     sharpness: 1.0 )
 
-        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
-                                         parameters: [intensity_param, sharpness_param],
-                                         relativeTime: delay + 0.37,
-                                         duration: 0.1 )
-        self.pattern.append(continuousEvent)
+        self.append_event( time: delay + 2.32,  intensity: 1.0,
+                           duration: 0.15,      sharpness: 1.0 )
+
     }
 
     func init_haptic_engine()
@@ -312,6 +307,16 @@ class GuidingLight_HapticsController
         self.stop_haptics()
 
         self.init_double_beep_pattern(delay: 0.5)
+        self.play_pattern(self.pattern)
+
+        self.mode = HapticsMode.special_pattern
+    }
+
+    func play_celebration()
+    {
+        self.stop_haptics()
+
+        self.init_celebration_pattern(delay: 0.5)
         self.play_pattern(self.pattern)
 
         self.mode = HapticsMode.special_pattern

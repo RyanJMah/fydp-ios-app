@@ -411,7 +411,8 @@ class GuidingLiteViewController: UIViewController
 
         if done
         {
-            self.haptics_controller?.play_double_beep()
+            self.haptics_controller?.play_celebration()
+            // self.haptics_controller?.play_double_beep()
         }
         else // !done
         {
