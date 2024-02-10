@@ -32,6 +32,7 @@ class GuidingLite_HeadingSensor: NSObject, CLLocationManagerDelegate {
     
     func get_orientation() -> CLLocationDirection?
     {
+        // return locationManager.heading?.magneticHeading
         return locationManager.heading?.trueHeading
     }
     
