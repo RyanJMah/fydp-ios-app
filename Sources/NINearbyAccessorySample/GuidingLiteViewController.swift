@@ -401,7 +401,6 @@ class GuidingLiteViewController: UIViewController
     func mqtt_haptics_msg_callback(haptics: [String: Any])
     {
         let intensity = haptics["intensity"] as! NSNumber
-        let sharpness = haptics["sharpness"] as! NSNumber
         let heartbeat = haptics["heartbeat"] as! Bool
         let done      = haptics["done"] as! Bool
 
@@ -421,7 +420,7 @@ class GuidingLiteViewController: UIViewController
         if !heartbeat
         {
             self.haptics_controller?.set_params( intensity: intensity.floatValue,
-                                                 sharpness: sharpness.floatValue,
+                                                 sharpness: 0.75,
                                                  burst_duration: 0.25,
                                                  duty_cycle: 1.0 )
         }

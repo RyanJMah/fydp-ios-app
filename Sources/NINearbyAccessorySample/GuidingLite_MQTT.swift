@@ -122,7 +122,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     /*
     {
         "intensity": 0.5,
-        "sharpness": 0.5,
         "heartbeat": false,
         "done": false
     }

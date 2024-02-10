@@ -278,7 +278,7 @@ class GuidingLight_HapticsController
     {
         self.stop_haptics()
 
-        self.init_double_beep_pattern(delay: 1.5)
+        self.init_double_beep_pattern(delay: 0.5)
         self.play_pattern(self.pattern)
 
         self.mode = HapticsMode.special_pattern
