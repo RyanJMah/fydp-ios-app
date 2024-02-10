@@ -262,7 +262,7 @@ class GuidingLight_HapticsController
         self.burst_duration  = burst_duration
         self.duty_cycle      = duty_cycle
 
-        print("intensity: \(intensity) sharpness: \(sharpness) burst_duration: \(burst_duration) duty_cycle: \(duty_cycle)")
+        // print("intensity: \(intensity) sharpness: \(sharpness) burst_duration: \(burst_duration) duty_cycle: \(duty_cycle)")
     }
 
     func play_continuous()
