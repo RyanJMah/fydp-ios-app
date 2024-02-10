@@ -43,29 +43,62 @@ class GuidingLight_HapticsController
 
     var mode = HapticsMode.continuous
 
+    func append_event( time: TimeInterval,
+                       intensity: Float,
+                       duration: TimeInterval,
+                       sharpness: Float )
+    {
+        let intensity_param = CHHapticEventParameter( parameterID: .hapticIntensity, value: intensity )
+        let sharpness_param = CHHapticEventParameter( parameterID: .hapticSharpness, value: sharpness )
+
+        let continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
+                                            parameters: [intensity_param, sharpness_param],
+                                            relativeTime: time,
+                                            duration: duration )
+        self.pattern.append(continuousEvent)
+    }
+
     func init_double_beep_pattern(delay: Double)
+    {
+        self.pattern.removeAll()
+
+        self.append_event( time: 0 + delay,     intensity: 0.9,
+                           duration: 0.185,     sharpness: 1.0 )
+
+        self.append_event( time: 0.25 + delay,  intensity: 1.0,
+                           duration: 0.35,      sharpness: 1.0 )
+    }
+
+    func init_celebration_pattern(delay: Double)
     {
         self.pattern.removeAll()
 
         let intensity_param = CHHapticEventParameter( parameterID: .hapticIntensity, value: 0.0 )
         let sharpness_param = CHHapticEventParameter( parameterID: .hapticSharpness, value: 0.0 )
 
-        intensity_param.value = 0.9
+        intensity_param.value = 0.75
         sharpness_param.value = 1.0
-        let continuousEvent1 = CHHapticEvent( eventType: .hapticContinuous,
-                                              parameters: [intensity_param, sharpness_param],
-                                              relativeTime: 0 + delay,
-                                              duration: 0.185 )
 
-        intensity_param.value = 1.0
-        sharpness_param.value = 1.0
-        let continuousEvent2 = CHHapticEvent( eventType: .hapticContinuous,
-                                              parameters: [intensity_param, sharpness_param],
-                                              relativeTime: 0.25 + delay,
-                                              duration: 0.35 )
+        var continuousEvent: CHHapticEvent
 
-        self.pattern.append(continuousEvent1)
-        self.pattern.append(continuousEvent2)
+        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
+                                         parameters: [intensity_param, sharpness_param],
+                                         relativeTime: delay + 0,
+                                         duration: 0.1 )
+        self.pattern.append(continuousEvent)
+
+
+        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
+                                         parameters: [intensity_param, sharpness_param],
+                                         relativeTime: delay + 0.37,
+                                         duration: 0.1 )
+        self.pattern.append(continuousEvent)
+
+        continuousEvent = CHHapticEvent( eventType: .hapticContinuous,
+                                         parameters: [intensity_param, sharpness_param],
+                                         relativeTime: delay + 0.37,
+                                         duration: 0.1 )
+        self.pattern.append(continuousEvent)
     }
 
     func init_haptic_engine()
