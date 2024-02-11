@@ -196,12 +196,12 @@ class GuidingLiteViewController: UIViewController
 
         self.locationPinImage.isHidden = true
 
-        self.mqtt_handler.connect_callback        = self.mqtt_connect_callback
-        self.mqtt_handler.pathing_callback        = self.mqtt_pathing_msg_callback
-        self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
-        self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
-        self.mqtt_handler.arrow_callback          = self.mqtt_arrow_msg_callback
-        self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
+        self.mqtt_handler.connect_callback  = self.mqtt_connect_callback
+        self.mqtt_handler.pathing_callback  = self.mqtt_pathing_msg_callback
+        self.mqtt_handler.position_callback = self.mqtt_position_msg_callback
+        self.mqtt_handler.haptics_callback  = self.mqtt_haptics_msg_callback
+        self.mqtt_handler.arrow_callback    = self.mqtt_arrow_msg_callback
+        self.mqtt_handler.metadata_callback = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
         _ = Timer.scheduledTimer( timeInterval: self.ui_update_period,
