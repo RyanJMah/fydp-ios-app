@@ -24,7 +24,6 @@ let METADATA_TOPIC           = "gl/server/metadata"
 let PATHFINDING_CONFIG_TOPIC = "gl/server/pathfinding/config"
 
 let PATHING_TOPIC  = "gl/user/\(USER_ID)/path"
-let HEADING_TOPIC  = "gl/user/\(USER_ID)/target_heading"
 let POSITION_TOPIC = "gl/user/\(USER_ID)/position"
 let HAPTICS_TOPIC  = "gl/user/\(USER_ID)/haptics_options"
 let ARROW_TOPIC    = "gl/user/\(USER_ID)/user_arrow"
@@ -118,8 +117,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     // Takes in x, y, heading
     var position_callback: ((Float, Float, Float) -> Void)? = nil
 
-    var target_heading_callback: ((Float) -> Void)? = nil
-
     /*
     {
         "intensity": 0.5,
@@ -141,7 +138,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         print("SUCCESSFULLY CONNECTED TO BROKER!")
 
         mqtt.subscribe(PATHING_TOPIC)
-        mqtt.subscribe(HEADING_TOPIC)
         mqtt.subscribe(POSITION_TOPIC)
         mqtt.subscribe(HAPTICS_TOPIC)
         mqtt.subscribe(ARROW_TOPIC)
@@ -195,14 +191,6 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
 
                     // print("Received path: \(points)")
                     callback(points)
-                }
-
-            case HEADING_TOPIC:
-                if  let callback = target_heading_callback,
-                    let decodedDict = decodeJSON(message.string!),
-                    let heading = decodedDict["val"] as? NSNumber
-                {
-                    callback(heading.floatValue)
                 }
 
             case HAPTICS_TOPIC:

@@ -181,7 +181,6 @@ class GuidingLiteViewController: UIViewController
     var user_position:        CGPoint = CGPoint(x: 0, y: 0)
     var user_heading:         Float = 0.0
     var user_arrow_direction: Float = 0.0
-    // var user_target_heading: Float = 90.0
 
     var server_tick_period: TimeInterval = 0.1
     var ui_update_period:   TimeInterval = 1/60
@@ -200,8 +199,7 @@ class GuidingLiteViewController: UIViewController
         self.mqtt_handler.connect_callback        = self.mqtt_connect_callback
         self.mqtt_handler.pathing_callback        = self.mqtt_pathing_msg_callback
         self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
-        self.mqtt_handler.target_heading_callback = self.mqtt_target_heading_msg_callback
-        // self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
+        self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
         self.mqtt_handler.arrow_callback          = self.mqtt_arrow_msg_callback
         self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
 
@@ -392,12 +390,6 @@ class GuidingLiteViewController: UIViewController
         self.user_heading  = heading
 
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
-    }
-
-    func mqtt_target_heading_msg_callback(heading: Float)
-    {
-        // print("Received heading: \(heading)")
-        // self.user_target_heading = heading
     }
 
     func mqtt_haptics_msg_callback(haptics: [String: Any])
