@@ -27,6 +27,7 @@ let PATHING_TOPIC  = "gl/user/\(USER_ID)/path"
 let HEADING_TOPIC  = "gl/user/\(USER_ID)/target_heading"
 let POSITION_TOPIC = "gl/user/\(USER_ID)/position"
 let HAPTICS_TOPIC  = "gl/user/\(USER_ID)/haptics_options"
+let ARROW_TOPIC    = "gl/user/\(USER_ID)/user_arrow"
 
 let SERVER_MDNS_HOSTNAME = "GuidingLight._mqtt._tcp.local."
 
@@ -128,6 +129,8 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
     */
     var haptics_callback: (( [String: Any] ) -> Void)? = nil
 
+    var arrow_callback: ((Float) -> Void)? = nil
+
     // Takes in dictionary of metadata
     var metadata_callback: ( ([String: Any]) -> Void )? = nil
     ////////////////////////////////////////////////////////////////////////
@@ -141,6 +144,7 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
         mqtt.subscribe(HEADING_TOPIC)
         mqtt.subscribe(POSITION_TOPIC)
         mqtt.subscribe(HAPTICS_TOPIC)
+        mqtt.subscribe(ARROW_TOPIC)
 
         mqtt.subscribe(METADATA_TOPIC)
 
@@ -208,6 +212,13 @@ class GuidingLite_MqttHandler: CocoaMQTTDelegate {
                     callback(decodedDict)
                 }
 
+            case ARROW_TOPIC:
+                if  let callback = arrow_callback,
+                    let decodedDict = decodeJSON(message.string!),
+                    let direction = decodedDict["val"] as? NSNumber
+                {
+                    callback(direction.floatValue)
+                }
                     
             case POSITION_TOPIC:
                 if  let callback = position_callback,

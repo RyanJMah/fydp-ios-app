@@ -177,10 +177,11 @@ class GuidingLiteViewController: UIViewController
     var png_to_phone_scale_y:   CGFloat = 1.0
     var png_to_phone_scale_x:   CGFloat = 1.0
 
-    var prev_user_position:  CGPoint = CGPoint(x: 0, y: 0)
-    var user_position:       CGPoint = CGPoint(x: 0, y: 0)
-    var user_heading:        Float = 0.0
-    var user_target_heading: Float = 90.0
+    var prev_user_position:   CGPoint = CGPoint(x: 0, y: 0)
+    var user_position:        CGPoint = CGPoint(x: 0, y: 0)
+    var user_heading:         Float = 0.0
+    var user_arrow_direction: Float = 0.0
+    // var user_target_heading: Float = 90.0
 
     var server_tick_period: TimeInterval = 0.1
     var ui_update_period:   TimeInterval = 1/60
@@ -200,7 +201,8 @@ class GuidingLiteViewController: UIViewController
         self.mqtt_handler.pathing_callback        = self.mqtt_pathing_msg_callback
         self.mqtt_handler.position_callback       = self.mqtt_position_msg_callback
         self.mqtt_handler.target_heading_callback = self.mqtt_target_heading_msg_callback
-        self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
+        // self.mqtt_handler.haptics_callback        = self.mqtt_haptics_msg_callback
+        self.mqtt_handler.arrow_callback          = self.mqtt_arrow_msg_callback
         self.mqtt_handler.metadata_callback       = self.mqtt_metadata_msg_callback
 
         // Main UI timer, 200ms
@@ -287,12 +289,12 @@ class GuidingLiteViewController: UIViewController
 
     @objc func expensive_initialization()
     {
-        // self.showIPAddressInputDialog()
+        self.showIPAddressInputDialog()
 
-        self.mqtt_client.initialize("192.168.1.121")
-        // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
-        self.mqtt_client.set_handler(self.mqtt_handler)
-        self.mqtt_client.connect()
+        // self.mqtt_client.initialize("192.168.1.121")
+        // // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
+        // self.mqtt_client.set_handler(self.mqtt_handler)
+        // self.mqtt_client.connect()
 
         g_uwb_manager = GuidingLite_UWBManager(arView: self.arView)
 
@@ -312,7 +314,7 @@ class GuidingLiteViewController: UIViewController
         self.updateUserArrow( pos: self.user_position,
                               angle: self.user_heading )
 
-        self.updateDirectionArrow(angle: self.user_target_heading)
+        self.updateDirectionArrow(angle: self.user_arrow_direction)
     }
 
     @objc func telemetry_timer()
@@ -395,7 +397,7 @@ class GuidingLiteViewController: UIViewController
     func mqtt_target_heading_msg_callback(heading: Float)
     {
         // print("Received heading: \(heading)")
-        self.user_target_heading = heading
+        // self.user_target_heading = heading
     }
 
     func mqtt_haptics_msg_callback(haptics: [String: Any])
@@ -437,6 +439,11 @@ class GuidingLiteViewController: UIViewController
                                                  burst_duration: 0.07,
                                                  duty_cycle: 0.075 )
         }
+    }
+
+    func mqtt_arrow_msg_callback(arrow_direction: Float)
+    {
+        self.user_arrow_direction = arrow_direction + 90
     }
 
     func mqtt_pathing_msg_callback(server_path: [CGPoint])
