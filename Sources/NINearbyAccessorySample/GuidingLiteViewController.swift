@@ -19,6 +19,9 @@ import Foundation
 
 var g_uwb_manager: GuidingLite_UWBManager?
 
+var g_user_png_position:  CGPoint = CGPoint(x: 0, y: 0)
+var g_user_real_position: CGPoint = CGPoint(x: 0, y: 0)
+
 func decodeJSON(_ jsonString: String) -> [String: Any]? {
     // Step 1: Convert the JSON string to Data
     guard let jsonData = jsonString.data(using: .utf8) else {
@@ -86,6 +89,9 @@ class DebugViewController: UIViewController
     @IBOutlet weak var anchor2DistLabel: UILabel!
     @IBOutlet weak var anchor3DistLabel: UILabel!
     
+    @IBOutlet weak var realLifeXYLabel: UILabel!
+    @IBOutlet weak var pixelSpaceXYLabel: UILabel!
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -126,6 +132,15 @@ class DebugViewController: UIViewController
         anchor1DistLabel.text = String( round(anchor1_data?.distance_m ?? 0.0, 4) )
         anchor2DistLabel.text = String( round(anchor2_data?.distance_m ?? 0.0, 4) )
         anchor3DistLabel.text = String( round(anchor3_data?.distance_m ?? 0.0, 4) )
+
+        let real_life_x = round(Float(g_user_real_position.x), 2)
+        let real_life_y = round(Float(g_user_real_position.y), 2)
+
+        let pixel_space_x = round(Float(g_user_png_position.x), 2)
+        let pixel_space_y = round(Float(g_user_png_position.y), 2)
+
+        realLifeXYLabel.text   = "(\(real_life_x), \(real_life_y))"
+        pixelSpaceXYLabel.text = "(\(pixel_space_x), \(pixel_space_y))"
     }
 }
 
@@ -389,6 +404,9 @@ class GuidingLiteViewController: UIViewController
         self.user_position = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
         self.user_heading  = heading
 
+        g_user_png_position  = self.user_position
+        g_user_real_position = self.real_life_to_png( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
+
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
     }
 
@@ -571,29 +589,6 @@ class GuidingLiteViewController: UIViewController
         self.prev_user_position = pos
     }
 
-
-    // func updateUserArrow(pos: CGPoint, angle: Float)
-    // {
-    //     var point = pos
-        
-    //     // print("User arrow position: \(point)")
-        
-    //     let halfWidth = userArrowImage.frame.size.width / 2.0
-    //     let halfHeight = userArrowImage.frame.size.height / 2.0
-        
-    //     point.x -= halfWidth
-    //     point.y -= halfHeight
-
-    //     let radians  = self.fix_angle(angle)
-    //     let rotation = CGAffineTransform(rotationAngle: CGFloat(radians))
-
-    //     UIView.animate( withDuration: self.server_tick_period )
-    //     {
-    //         // self.userArrowImage.frame.origin = point
-    //         self.userArrowImage.transform    = rotation
-    //     }    
-    // }
-
     func updateDirectionArrow(angle: Float)
     {
         let radians = self.fix_angle(angle)
@@ -635,10 +630,17 @@ class GuidingLiteViewController: UIViewController
         return ret
     }
 
+    func real_life_to_png(_ real_life_point: CGPoint) -> CGPoint
+    {
+        let ret = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
+                           y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
+
+        return ret
+    }
+
     func real_life_to_phone(_ real_life_point: CGPoint) -> CGPoint
     {
-        let phone_point = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
-                                   y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
+        let phone_point = self.real_life_to_png(real_life_point)
 
         let ret = CGPoint( x: phone_point.x + self.mapBottomLeft.x,
                            y: self.mapBottomLeft.y - phone_point.y )
