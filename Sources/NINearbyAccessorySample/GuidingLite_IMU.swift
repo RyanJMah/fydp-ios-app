@@ -47,7 +47,7 @@ class GuidingLite_HeadingSensor: NSObject, CLLocationManagerDelegate {
         // We can handle orientation update events here (if we need to in the future)
         if newHeading.headingAccuracy < 0 || newHeading.headingAccuracy > 30 {
             // Heading accuracy is poor, suggest recalibration
-            displayRecalibrationAlert()
+//            displayRecalibrationAlert()
         }
     }
     
@@ -56,10 +56,10 @@ class GuidingLite_HeadingSensor: NSObject, CLLocationManagerDelegate {
         print("Location manager error: \(error.localizedDescription)")
     }
 
-    func displayRecalibrationAlert() {
-        let alertController = UIAlertController(title: "Compass Accuracy", message: "Compass accuracy is poor. Consider recalibrating.", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        // Present the alert on the topmost view controller
-        UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
-    }
+//    func displayRecalibrationAlert() {
+//        let alertController = UIAlertController(title: "Compass Accuracy", message: "Compass accuracy is poor. Consider recalibrating.", preferredStyle: .alert)
+//        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//        // Present the alert on the topmost view controller
+//        UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+//    }
 }
