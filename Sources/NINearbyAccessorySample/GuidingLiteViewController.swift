@@ -632,15 +632,14 @@ class GuidingLiteViewController: UIViewController
 
     func real_life_to_png(_ real_life_point: CGPoint) -> CGPoint
     {
-        let ret = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
-                           y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
-
-        return ret
+        return CGPoint( x: real_life_point.x / self.real_life_to_png_scale,
+                        y: real_life_point.y / self.real_life_to_png_scale )
     }
 
     func real_life_to_phone(_ real_life_point: CGPoint) -> CGPoint
     {
-        let phone_point = self.real_life_to_png(real_life_point)
+        let phone_point = CGPoint( x: real_life_point.x / (self.png_to_phone_scale_x * self.real_life_to_png_scale),
+                                   y: real_life_point.y / (self.png_to_phone_scale_y * self.real_life_to_png_scale) )
 
         let ret = CGPoint( x: phone_point.x + self.mapBottomLeft.x,
                            y: self.mapBottomLeft.y - phone_point.y )
