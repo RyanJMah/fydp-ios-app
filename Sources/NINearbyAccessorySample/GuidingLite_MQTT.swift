@@ -91,7 +91,10 @@ class MQTTClient {
             return
         }
 
-        let msg = CocoaMQTTMessage(topic: topic, string: msg)
+        // REVERT QOS IF THERE ARE PROBLEMS
+        let msg = CocoaMQTTMessage(topic: topic, string: msg, qos: .qos0)
+        // let msg = CocoaMQTTMessage(topic: topic, string: msg)
+
         self.mqtt?.publish(msg)
     }
 
