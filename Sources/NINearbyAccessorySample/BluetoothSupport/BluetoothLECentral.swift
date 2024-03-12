@@ -394,9 +394,10 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
         }
         
         var aID = -1
-        if ( dev_name.contains("GL_Anchor") )
+        if ( dev_name == "GuidingLite_DemoAnchor" )
         {
-            aID = Int( dev_name.components(separatedBy: "_")[2] )!
+            // aID = Int( dev_name.components(separatedBy: "_")[2] )!
+            aID = 69
             print("Adding anchor \(aID)")
         }
         

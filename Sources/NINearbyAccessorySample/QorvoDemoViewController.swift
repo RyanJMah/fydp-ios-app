@@ -185,8 +185,8 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     let scene = SCNScene(named: "3d_arrow.usdz")
     
     var first_time_mqtt_init = true
-    var mqtt_client: MQTTClient = MQTTClient()
-    var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
+    // var mqtt_client: MQTTClient = MQTTClient()
+    // var mqtt_handler: GuidingLite_MqttHandler = GuidingLite_MqttHandler()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -263,10 +263,10 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     
     @objc func send_mqtt_heartbeat()
     {
-        DispatchQueue.global(qos: .default).async
-        {
-            self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
-        }
+        // DispatchQueue.global(qos: .default).async
+        // {
+        //     self.mqtt_client.publish( HEARTBEAT_TOPIC, "{status: \"online\"}" )
+        // }
     }
     
     @objc func send_distance_azimuth_mqtt(deviceID: Int, aID: Int)
@@ -318,8 +318,8 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
             let telem_data_copy = telem_data
             let telem_bytes = TelemetryData_ToBytes(telem_data_copy)
             
-            self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aID),
-                                            telem_bytes )
+            // self.mqtt_client.publish_bytes( DATA_TOPIC_BASE + String(aID),
+            //                                 telem_bytes )
             
 //            self.mqtt_client.publish( DATA_TOPIC_BASE + String(aID) + "sdlkfj", dataJSON )
         }
@@ -495,15 +495,15 @@ class AccessoryDemoViewController: UIViewController, ARSCNViewDelegate, ArrowPro
     @objc func timerHandler() {
         // ---------------------------------------------------------
         // MQTT SHIT
-        if ( self.first_time_mqtt_init )
-        {
-            self.mqtt_client.initialize()
+        // if ( self.first_time_mqtt_init )
+        // {
+        //     self.mqtt_client.initialize()
 
-            self.mqtt_client.set_handler(self.mqtt_handler)
-            self.mqtt_client.connect()
+        //     self.mqtt_client.set_handler(self.mqtt_handler)
+        //     self.mqtt_client.connect()
             
-            self.first_time_mqtt_init = false
-        }
+        //     self.first_time_mqtt_init = false
+        // }
         // ---------------------------------------------------------
         
         
@@ -1093,7 +1093,7 @@ extension AccessoryDemoViewController: NISessionDelegate {
         }
         
         // Update location label
-        turnLabel.text = mqtt_handler.direction
+        // turnLabel.text = mqtt_handler.direction
         
         updateLocationFields(deviceID)
         updateMiniFields(deviceID)
