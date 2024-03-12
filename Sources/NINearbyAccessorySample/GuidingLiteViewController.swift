@@ -418,11 +418,16 @@ class GuidingLiteViewController: UIViewController
 
     func mqtt_position_msg_callback(x: Float, y: Float, heading: Float)
     {
+        let real_life_point = CGPoint(x: CGFloat(x), y: CGFloat(y))
+
         self.user_position = self.real_life_to_phone( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
         self.user_heading  = heading
 
-        g_user_png_position  = self.user_position
-        g_user_real_position = self.real_life_to_png( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
+        // g_user_png_position  = self.user_position
+        // g_user_real_position = self.real_life_to_png( CGPoint(x: CGFloat(x), y: CGFloat(y)) )
+
+        g_user_real_position = real_life_point
+        g_user_png_position  = self.real_life_to_png( real_life_point )
 
         // print("Received position: x = \(x), y = \(y), heading = \(heading) -> \(self.user_position)")
     }
