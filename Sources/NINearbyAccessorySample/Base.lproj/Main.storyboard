@@ -750,11 +750,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="symposium_area_no_tables 1" translatesAutoresizingMaskIntoConstraints="NO" id="5RV-Ki-pcj">
-                                <rect key="frame" x="63" y="336" width="289" height="489"/>
+                                <rect key="frame" x="18" y="276" width="378" height="463"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9x9-Hc-LA3">
+                                <rect key="frame" x="2" y="734" width="414" height="162"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </pickerView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Arrow" translatesAutoresizingMaskIntoConstraints="NO" id="bNr-z7-dIu">
-                                <rect key="frame" x="90" y="178" width="235" height="150"/>
+                                <rect key="frame" x="90" y="168" width="235" height="150"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <view alpha="0.40000000000000002" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uyj-kT-RMS">
@@ -772,6 +776,17 @@
                                             <action selector="cancelButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="lgL-hQ-rQ1"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DJJ-Lm-xQ8">
+                                        <rect key="frame" x="324" y="4" width="76" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Go">
+                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="17"/>
+                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="goButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="9DL-cf-TW7"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zwC-19-Bun">
                                         <rect key="frame" x="129" y="5" width="158.5" height="34.5"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -783,23 +798,12 @@
                                             <action selector="setButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="j0a-3p-waU"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DJJ-Lm-xQ8">
-                                        <rect key="frame" x="316" y="4" width="76" height="35"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Go">
-                                            <fontDescription key="titleFontDescription" name="AlNile-Bold" family="Al Nile" pointSize="17"/>
-                                            <color key="baseForegroundColor" systemColor="systemBlueColor"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <action selector="goButtonPressed:" destination="iYg-gi-0RG" eventType="touchUpInside" id="9DL-cf-TW7"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="scrollViewTexturedBackgroundColor"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="locationPin" translatesAutoresizingMaskIntoConstraints="NO" id="ZiA-Yv-V7Q">
-                                <rect key="frame" x="189" y="464" width="39" height="38"/>
+                                <rect key="frame" x="264" y="412" width="39" height="38"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1x3-Lp-44v">
@@ -815,7 +819,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FPo-Yu-Dkw">
-                                        <rect key="frame" x="347" y="82" width="48" height="38"/>
+                                        <rect key="frame" x="361" y="73" width="48" height="38"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="three_dots" title=""/>
@@ -827,7 +831,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="arrow_small" translatesAutoresizingMaskIntoConstraints="NO" id="2Na-un-mO8">
-                                <rect key="frame" x="196" y="585" width="25" height="28"/>
+                                <rect key="frame" x="196" y="577" width="25" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
@@ -845,6 +849,7 @@
                         <outlet property="directionArrowImage" destination="bNr-z7-dIu" id="4ZG-1O-yJt"/>
                         <outlet property="goDestButton" destination="DJJ-Lm-xQ8" id="G4N-bx-MzF"/>
                         <outlet property="guidingLiteSettingsButton" destination="FPo-Yu-Dkw" id="qEl-Hd-2BX"/>
+                        <outlet property="locationPicker" destination="9x9-Hc-LA3" id="15a-t5-sVk"/>
                         <outlet property="locationPinImage" destination="ZiA-Yv-V7Q" id="ZRu-vV-VAm"/>
                         <outlet property="mapImage" destination="5RV-Ki-pcj" id="51i-7i-lgw"/>
                         <outlet property="setDestButton" destination="zwC-19-Bun" id="0VV-lZ-Uuo"/>

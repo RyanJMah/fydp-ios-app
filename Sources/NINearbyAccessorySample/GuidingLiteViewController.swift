@@ -17,6 +17,16 @@ import os.log
 import CocoaMQTT
 import Foundation
 
+let g_hardcoded_locations: [String: CGPoint] = [
+    "Location 1": CGPoint(x: 0, y: 0),
+    "Location 2": CGPoint(x: 100.0, y: 100.0),
+    "Location 3": CGPoint(x: 300.0, y: 300.0),
+    "Location 4": CGPoint(x: 500.0, y: 500.0)
+]
+
+let g_hardcoded_server_ip = "192.168.1.2"
+
+
 var g_uwb_manager: GuidingLite_UWBManager?
 
 var g_user_png_position:  CGPoint = CGPoint(x: 0, y: 0)
@@ -144,7 +154,7 @@ class DebugViewController: UIViewController
     }
 }
 
-class GuidingLiteViewController: UIViewController
+class GuidingLiteViewController: UIViewController 
 {
     @IBOutlet weak var userArrowImage: UIImageView!
     @IBOutlet weak var guidingLiteSettingsButton: UIButton!
@@ -161,6 +171,11 @@ class GuidingLiteViewController: UIViewController
 
     @IBOutlet weak var mapImage: UIImageView!
 
+    @IBOutlet weak var locationPicker: UIPickerView!
+
+    let location_labels = Array(g_hardcoded_locations.keys)
+
+    
     let S_INIT = 0
     let S_SET_DEST = 1
     let S_GO = 2
@@ -217,6 +232,10 @@ class GuidingLiteViewController: UIViewController
         self.mqtt_handler.haptics_callback  = self.mqtt_haptics_msg_callback
         self.mqtt_handler.arrow_callback    = self.mqtt_arrow_msg_callback
         self.mqtt_handler.metadata_callback = self.mqtt_metadata_msg_callback
+
+        self.locationPicker.delegate = self
+        self.locationPicker.dataSource = self
+        self.locationPicker.reloadAllComponents()
 
         // Main UI timer, 200ms
         _ = Timer.scheduledTimer( timeInterval: self.ui_update_period,
@@ -302,12 +321,11 @@ class GuidingLiteViewController: UIViewController
 
     @objc func expensive_initialization()
     {
-        self.showIPAddressInputDialog()
+        // self.showIPAddressInputDialog()
 
-        // self.mqtt_client.initialize("192.168.1.121")
-        // // self.mqtt_client.initialize("GuidingLight._mqtt._tcp.local.")
-        // self.mqtt_client.set_handler(self.mqtt_handler)
-        // self.mqtt_client.connect()
+        self.mqtt_client.initialize(g_hardcoded_server_ip)
+        self.mqtt_client.set_handler(self.mqtt_handler)
+        self.mqtt_client.connect()
 
         g_uwb_manager = GuidingLite_UWBManager(arView: self.arView)
 
@@ -366,7 +384,6 @@ class GuidingLiteViewController: UIViewController
         }
     }
     /////////////////////////////////////////////////////////////////////////////////////
-
 
     /////////////////////////////////////////////////////////////////////////////////////
     // MQTT Callbacks
@@ -664,4 +681,61 @@ class GuidingLiteViewController: UIViewController
         return CGPoint(x: 0, y: 0)
     }
     /////////////////////////////////////////////////////////////////////////////////////
+}
+
+extension GuidingLiteViewController: UIPickerViewDelegate, UIPickerViewDataSource
+{
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        var label: UILabel
+
+        if let view = view as? UILabel
+        {
+            label = view
+        }
+        else
+        {
+            label = UILabel()
+
+            // Configure the label's appearance
+            label.textColor = .black // Choose a visible color
+            label.textAlignment = .center
+
+            // Set a visible font size
+            label.font = UIFont.systemFont(ofSize: 16)
+        }
+
+        // label.text = g_hardcoded_locations[row]
+        label.text = self.location_labels[row]
+
+        return label
+    }
+
+    func numberOfComponents(in pickerView: UIPickerView) -> Int
+    {
+        return 1
+    }
+
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    {
+        return g_hardcoded_locations.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String?
+    {
+        return self.location_labels[row]
+        // return g_hardcoded_locations[row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    {
+        // print("Selected location: \(g_hardcoded_locations[row])")
+
+        let location = self.location_labels[row]
+        let point    = g_hardcoded_locations[location]!
+
+        print("Selected location: \(location), \(point)")
+
+        self.updateLocationPinImage(pos: self.real_life_to_phone(point) )
+        self.locationPinImage.isHidden = false
+    }
 }
