@@ -475,14 +475,16 @@ extension DataCommunicationChannel: CBCentralManagerDelegate {
         if let didDisconnectHandler = accessoryDisconnectedHandler {
             didDisconnectHandler(qorvoDevice!.GuidingLite_aid, uniqueID)
         }
-        
+
+        retrievePeripheral()
+
         // Resume scanning after disconnection.
-        if connectionIterationsComplete < defaultIterations {
-            logger.info("Retrieve Peripheral")
-            retrievePeripheral()
-        } else {
-            logger.info("Connection iterations completed")
-        }
+        // if connectionIterationsComplete < defaultIterations {
+        //     logger.info("Retrieve Peripheral")
+        //     retrievePeripheral()
+        // } else {
+        //     logger.info("Connection iterations completed")
+        // }
     }
 }
 
